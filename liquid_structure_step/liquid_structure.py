@@ -671,6 +671,7 @@ class LiquidStructure(seamm.Node):
         for c in PAIR_CLASSES:
             table[c] = []
         results = {}
+        notes = []
         for cation, anion in ion_pairs:
             label = f"{cation}-{anion}"
             res = rdf_results[(cation, anion)]
@@ -689,7 +690,13 @@ class LiquidStructure(seamm.Node):
                 results[label] = {"error": "no contact cutoff"}
                 continue
             if r2 is None:
-                r2 = r1  # no solvent-separated class without a second cutoff
+                # No solvent-separated class without a second cutoff
+                r2 = r1
+                notes.append(
+                    f"{label}: the g(r) has no clear second minimum, so solvent-"
+                    "separated pairs (SSIP) are not told apart from free cations. "
+                    f"Give two cutoffs to separate them, e.g. '{label}: {r1:.1f} 5.6'."
+                )
             cat_atoms = species.heavy_atoms(cation)
             an_atoms = species.heavy_atoms(anion)
             an_ids = np.unique(species.molecule_of_atom[an_atoms], return_inverse=True)[
@@ -724,6 +731,8 @@ class LiquidStructure(seamm.Node):
                     indent=8 * " ",
                 )
             )
+            for note in notes:
+                printer.normal(__(note, indent=8 * " "))
             printer.normal("")
         return results
 

@@ -155,6 +155,22 @@ def test_peak_and_minimum():
     assert peak_and_minimum(r, np.full_like(r, 0.5))["peak"] is None
 
 
+def test_minimum_of_a_noisy_sparse_pair():
+    """A few ions give single-bin spikes above 1 everywhere; they must not be
+    taken for the next peak (run 12197: 9 NaCl, the minimum fell at 2.77 Å)."""
+    rng = np.random.default_rng(3)
+    r = np.arange(0.01, 8.0, 0.02)
+    g = np.where(r < 2.4, 0.0, 0.3)
+    g += 1.5 * np.exp(-(((r - 2.7) / 0.12) ** 2))
+    g += np.where(r > 4.0, 1.0 + 1.2 * np.exp(-(((r - 4.8) / 0.4) ** 2)), 0.0)
+    noisy = g + np.where(
+        (r > 2.9) & (r < 4.0), rng.choice([0.0, 1.5], r.size, p=[0.8, 0.2]), 0
+    )
+    pm = peak_and_minimum(r, noisy)
+    assert pm["peak"] == pytest.approx(2.7, abs=0.05)
+    assert 3.0 < pm["minimum"] < 4.0
+
+
 # ----------------------------------------------------------------------
 # Ion pairing
 # ----------------------------------------------------------------------

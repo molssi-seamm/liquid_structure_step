@@ -292,12 +292,34 @@ def _mean_and_block_error(rows, n_blocks):
     return mean, err, n_blocks
 
 
-def peak_and_minimum(r, g, smooth=5):
+def _smooth(g, n):
+    """A moving average over n bins, normalized at the ends rather than padded
+    with zeros."""
+    if n <= 1:
+        return g
+    kernel = np.ones(n)
+    return np.convolve(g, kernel, mode="same") / np.convolve(
+        np.ones_like(g), kernel, mode="same"
+    )
+
+
+def _first_run(mask, n):
+    """The first index where ``mask`` is true for ``n`` bins in a row, or None."""
+    if mask.size < n:
+        return None
+    runs = np.convolve(mask.astype(int), np.ones(n, dtype=int), mode="valid")
+    hits = np.where(runs == n)[0]
+    return int(hits[0]) if hits.size > 0 else None
+
+
+def peak_and_minimum(r, g, width=0.2, sustain=0.2):
     """The first peak and first minimum of a g(r).
 
-    The g(r) is smoothed by a moving average over ``smooth`` bins. The first peak is
-    the highest point before g(r) first falls below 1 after exceeding it; the first
-    minimum the lowest point between that peak and the next rise above 1.
+    The g(r) is smoothed over ``width`` Å, and a crossing of 1 counts only when it
+    lasts ``sustain`` Å, so that the noise of a sparse pair (a few ions) is not
+    taken for structure. The first peak is the highest point (of the unsmoothed
+    g(r)) of the first stretch above 1; the first minimum the lowest point of the
+    smoothed g(r) between it and the next stretch above 1.
 
     Returns
     -------
@@ -307,51 +329,46 @@ def peak_and_minimum(r, g, smooth=5):
     """
     r = np.asarray(r)
     g = np.asarray(g, dtype=float)
-    if smooth > 1:
-        # A moving average, normalized at the ends rather than padded with zeros
-        kernel = np.ones(smooth)
-        gs = np.convolve(g, kernel, mode="same") / np.convolve(
-            np.ones_like(g), kernel, mode="same"
-        )
-    else:
-        gs = g
     result = {
         "peak": None,
         "peak_height": None,
         "minimum": None,
         "minimum_height": None,
     }
-    above = np.where(gs > 1.0)[0]
-    if above.size == 0:
+    if r.size < 3:
         return result
-    start = above[0]
-    below = np.where(gs[start:] < 1.0)[0]
-    end = start + below[0] if below.size > 0 else len(gs)
-    i_peak = start + int(np.argmax(gs[start:end]))
+    dr = float(r[1] - r[0])
+    smooth = max(1, int(round(width / dr)))
+    n = max(1, int(round(sustain / dr)))
+    gs = _smooth(g, smooth)
+    start = _first_run(gs > 1.0, n)
+    if start is None:
+        return result
+    below = _first_run(gs[start:] < 1.0, n)
+    end = start + below if below is not None else len(gs)
+    i_peak = start + int(np.argmax(g[start:end]))
     result["peak"] = float(r[i_peak])
     result["peak_height"] = float(g[i_peak])
-    if below.size == 0:
+    if below is None:
         return result
-    rise = np.where(gs[end:] > 1.0)[0]
-    stop = end + rise[0] if rise.size > 0 else len(gs)
-    if stop - i_peak < 2:
-        return result
+    rise = _first_run(gs[end:] > 1.0, n)
+    stop = end + rise if rise is not None else len(gs)
     i_min = i_peak + int(np.argmin(gs[i_peak:stop]))
-    if i_min >= len(gs) - smooth:
+    if i_min >= len(gs) - max(1, smooth // 2):
         return result  # still falling at the end of the range
     result["minimum"] = float(r[i_min])
     result["minimum_height"] = float(gs[i_min])
     return result
 
 
-def second_minimum(r, g, first, smooth=5):
+def second_minimum(r, g, first, width=0.2, sustain=0.2):
     """The second minimum of a g(r): the lowest point between the peak after the
-    first minimum and the next rise above 1, or None."""
+    first minimum and the next stretch above 1, or None."""
     r = np.asarray(r)
     if first is None:
         return None
     i0 = int(np.searchsorted(r, first))
-    rest = peak_and_minimum(r[i0:], np.asarray(g)[i0:], smooth=smooth)
+    rest = peak_and_minimum(r[i0:], np.asarray(g)[i0:], width=width, sustain=sustain)
     return rest["minimum"]
 
 
