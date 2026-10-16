@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=c224919a" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=5aae1070"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/liquid_structure_step/liquid_structure';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2026.10.16" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/SEAMM logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../_static/SEAMM Inverted 288x181.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Liquid Structure</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../authors.html">
+    Development Team
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../history.html">
+    History
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://molssi-seamm.github.io">
+    Main SEAMM documentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://molssi-seamm.github.io">
+    SEAMM Documentation
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://molssi.org">
+    MolSSI
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/molssi-seamm/geometry_analysis_step" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/MolSSI_NSF" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../authors.html">
+    Development Team
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../history.html">
+    History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://molssi-seamm.github.io">
+    Main SEAMM documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://molssi-seamm.github.io">
+    SEAMM Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://molssi.org">
+    MolSSI
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/molssi-seamm/geometry_analysis_step" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://twitter.com/MolSSI_NSF" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">liquid_structure_step.liquid_structure</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for liquid_structure_step.liquid_structure</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">"""Non-graphical part of the Liquid Structure step in a SEAMM flowchart</span>
+
+<span class="sd">The structure of liquids and solutions from the positions sampled in MD: partial</span>
+<span class="sd">radial distribution functions and coordination numbers, the classification of ion</span>
+<span class="sd">pairs (free, solvent-separated, contact, aggregated), and the solvation shells of</span>
+<span class="sd">solutes (coordination numbers per solvent, the shells' composition, pairing and</span>
+<span class="sd">residence times). The analysis itself is in :mod:`liquid_structure_step.analysis`.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.resources</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seamm_md_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_md</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seamm_md_analysis.requirements</span><span class="w"> </span><span class="kn">import</span> <span class="n">Need</span><span class="p">,</span> <span class="n">Requirements</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seamm_md_analysis.step_support</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_md_flowchart</span><span class="p">,</span>
+    <span class="n">md_inputs</span><span class="p">,</span>
+    <span class="n">read_files</span><span class="p">,</span>
+    <span class="n">request_sampling</span><span class="p">,</span>
+    <span class="n">run_own_md</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">liquid_structure_step</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">liquid_structure_step.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnalysisError</span><span class="p">,</span>
+    <span class="n">PAIR_CLASSES</span><span class="p">,</span>
+    <span class="n">PairingAccumulator</span><span class="p">,</span>
+    <span class="n">RDF</span><span class="p">,</span>
+    <span class="n">ShellAccumulator</span><span class="p">,</span>
+    <span class="n">Species</span><span class="p">,</span>
+    <span class="n">classify_ion_pairs</span><span class="p">,</span>
+    <span class="n">coordination_number</span><span class="p">,</span>
+    <span class="n">find_cutoff</span><span class="p">,</span>
+    <span class="n">parse_cutoffs</span><span class="p">,</span>
+    <span class="n">parse_pairs</span><span class="p">,</span>
+    <span class="n">peak_and_minimum</span><span class="p">,</span>
+    <span class="n">second_minimum</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">molsystem</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seamm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seamm_util</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seamm_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">Q_</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seamm_util.printing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">printing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seamm_util.printing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormattedText</span> <span class="k">as</span> <span class="n">__</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1"># MDAnalysis warns about optional packages (netCDF4) in the step's output</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"MDAnalysis"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">printing</span><span class="o">.</span><span class="n">getPrinter</span><span class="p">()</span>
+<span class="n">printer</span> <span class="o">=</span> <span class="n">printing</span><span class="o">.</span><span class="n">getPrinter</span><span class="p">(</span><span class="s2">"Liquid Structure"</span><span class="p">)</span>
+
+<span class="c1"># Add this module's properties to the standard properties</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">"liquid_structure_step"</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"data"</span>
+<span class="n">csv_file</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="s2">"properties.csv"</span>
+<span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="n">molsystem</span><span class="o">.</span><span class="n">add_properties_from_file</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>
+
+<span class="c1">#: The interval between frames that the residence times need</span>
+<span class="n">RESIDENCE_INTERVAL</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="s2">"ps"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="fmt">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.fmt">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A value and its error as text."""</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">""</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">digits</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">digits</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">digits</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">"</span></div>
+
+
+
+<div class="viewcode-block" id="LiquidStructure">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LiquidStructure</span><span class="p">(</span><span class="n">seamm</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The non-graphical part of a Liquid Structure step in a flowchart.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    subflowchart : seamm.Flowchart</span>
+<span class="sd">        The MD to run, when this step runs its own MD.</span>
+
+<span class="sd">    parameters : LiquidStructureParameters</span>
+<span class="sd">        The control parameters for Liquid Structure.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    TkLiquidStructure,</span>
+<span class="sd">    LiquidStructure, LiquidStructureParameters</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">flowchart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"Liquid Structure"</span><span class="p">,</span>
+        <span class="n">namespace</span><span class="o">=</span><span class="s2">"org.molssi.seamm"</span><span class="p">,</span>
+        <span class="n">extension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""A step for Liquid Structure in a SEAMM flowchart.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        flowchart: seamm.Flowchart</span>
+<span class="sd">            The non-graphical flowchart that contains this step.</span>
+<span class="sd">        title: str</span>
+<span class="sd">            The name displayed in the flowchart.</span>
+<span class="sd">        namespace : str</span>
+<span class="sd">            The namespace for the plug-ins of the subflowchart</span>
+<span class="sd">        extension: None</span>
+<span class="sd">            Not yet implemented</span>
+<span class="sd">        logger : Logger = logger</span>
+<span class="sd">            The logger to use and pass to parent classes</span>
+<span class="sd">        """</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Creating Liquid Structure </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span> <span class="o">=</span> <span class="n">seamm</span><span class="o">.</span><span class="n">Flowchart</span><span class="p">(</span>
+            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Liquid Structure"</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="n">namespace</span>
+        <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">flowchart</span><span class="o">=</span><span class="n">flowchart</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Liquid Structure"</span><span class="p">,</span>
+            <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">liquid_structure_step</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">liquid_structure_step</span><span class="o">.</span><span class="n">LiquidStructureParameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The semantic version of this module."""</span>
+        <span class="k">return</span> <span class="n">liquid_structure_step</span><span class="o">.</span><span class="n">__version__</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">git_revision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The git version of this module."""</span>
+        <span class="k">return</span> <span class="n">liquid_structure_step</span><span class="o">.</span><span class="n">__git_revision__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Clear the data of earlier runs, e.g. from an earlier loop iteration."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># The md.h5md file of each run</span>
+
+<div class="viewcode-block" id="LiquidStructure.create_parser">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.create_parser">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Setup the command-line / config file parser"""</span>
+        <span class="n">parser_name</span> <span class="o">=</span> <span class="s2">"liquid-structure-step"</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">seamm_util</span><span class="o">.</span><span class="n">getParser</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowchart</span><span class="o">.</span><span class="n">_parser</span>
+
+        <span class="n">parser_exists</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">parser_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create_parser</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">parser_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parser_exists</span><span class="p">:</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+                <span class="n">parser_name</span><span class="p">,</span>
+                <span class="s2">"--html"</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s2">"whether to write out html files for graphs, etc."</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">reset_visited</span><span class="p">()</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="s2">"1"</span><span class="p">)</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">create_parser</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LiquidStructure.description_text">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.description_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create the text description of what this step will do.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        P: dict</span>
+<span class="sd">            An optional dictionary of the current values of the control</span>
+<span class="sd">            parameters.</span>
+<span class="sd">        short : bool = False</span>
+<span class="sd">            Leave out the description of the sub-flowchart.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            A description of the current step.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">P</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values_to_dict</span><span class="p">()</span>
+
+        <span class="n">what</span> <span class="o">=</span> <span class="s2">"radial distribution functions and coordination numbers"</span>
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"pairs"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"the pairs given"</span><span class="p">:</span>
+            <span class="n">what</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" of </span><span class="si">{</span><span class="n">P</span><span class="p">[</span><span class="s1">'pair list'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">what</span> <span class="o">+=</span> <span class="s2">" of every pair of elements"</span>
+        <span class="n">extras</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]:</span>
+            <span class="n">extras</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"the pairing of the ions"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"solvation shells"</span><span class="p">]:</span>
+            <span class="n">extras</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">"the solvation shells of "</span>
+                <span class="o">+</span> <span class="p">(</span>
+                    <span class="n">P</span><span class="p">[</span><span class="s2">"solute list"</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"solutes"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"the solutes given"</span>
+                    <span class="k">else</span> <span class="s2">"the monatomic ions"</span>
+                <span class="p">)</span>
+                <span class="o">+</span> <span class="p">(</span><span class="s2">", with residence times"</span> <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">extras</span><span class="p">:</span>
+            <span class="n">what</span> <span class="o">+=</span> <span class="s2">", and "</span> <span class="o">+</span> <span class="s2">" and "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span>
+
+        <span class="n">source</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"md source"</span><span class="p">,</span> <span class="n">run_own_md</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="n">run_own_md</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Analyze the structure: </span><span class="si">{</span><span class="n">what</span><span class="si">}</span><span class="s2">, from </span><span class="si">{</span><span class="n">P</span><span class="p">[</span><span class="s1">'nruns'</span><span class="p">]</span><span class="si">}</span><span class="s2"> runs of the MD "</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s2">"below.</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Analyze the structure: </span><span class="si">{</span><span class="n">what</span><span class="si">}</span><span class="s2">, from "</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="n">read_files</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"the MD in </span><span class="si">{</span><span class="n">P</span><span class="p">[</span><span class="s1">'md files'</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="se">\n\n</span><span class="s2">"</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> earlier in the flowchart.</span><span class="se">\n\n</span><span class="s2">"</span>
+            <span class="n">short</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">short</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">root_directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowchart</span><span class="o">.</span><span class="n">root_directory</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="s2">"1"</span><span class="p">)</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="n">__</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">description_text</span><span class="p">())</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Error describing the liquid structure flowchart: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> in "</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                    <span class="k">raise</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">__</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LiquidStructure.run">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run a Liquid Structure step.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        seamm.Node</span>
+<span class="sd">            The next node object in the flowchart.</span>
+<span class="sd">        """</span>
+        <span class="n">next_node</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">printer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+
+        <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">current_values_to_dict</span><span class="p">(</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">seamm</span><span class="o">.</span><span class="n">flowchart_variables</span><span class="o">.</span><span class="n">_data</span>
+        <span class="p">)</span>
+
+        <span class="n">printer</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description_text</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">))</span>
+
+        <span class="c1"># Check what is asked for before any MD runs</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parse_cutoffs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"cutoffs"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"pairs"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"the pairs given"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parse_pairs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"pair list"</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">AnalysisError</span><span class="p">(</span><span class="s2">"No pairs were given."</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">AnalysisError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span>
+            <span class="n">raw</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bibliography</span><span class="p">[</span><span class="s2">"MDAnalysis2011"</span><span class="p">],</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">"MDAnalysis2011"</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="s2">"liquid_structure_step"</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">note</span><span class="o">=</span><span class="s2">"MDAnalysis, which reads the trajectory and finds the distances."</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span>
+            <span class="n">raw</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bibliography</span><span class="p">[</span><span class="s2">"MDAnalysis2016"</span><span class="p">],</span>
+            <span class="n">alias</span><span class="o">=</span><span class="s2">"MDAnalysis2016"</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="s2">"liquid_structure_step"</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">note</span><span class="o">=</span><span class="s2">"MDAnalysis, which reads the trajectory and finds the distances."</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">job_handler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">out_handler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">job_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">out_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="s2">"job.out"</span> <span class="ow">in</span> <span class="n">handler</span><span class="o">.</span><span class="n">baseFilename</span>
+            <span class="p">):</span>
+                <span class="n">job_handler</span> <span class="o">=</span> <span class="n">handler</span>
+                <span class="n">job_level</span> <span class="o">=</span> <span class="n">job_handler</span><span class="o">.</span><span class="n">level</span>
+                <span class="n">job_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">printing</span><span class="o">.</span><span class="n">JOB</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">):</span>
+                <span class="n">out_handler</span> <span class="o">=</span> <span class="n">handler</span>
+                <span class="n">out_level</span> <span class="o">=</span> <span class="n">out_handler</span><span class="o">.</span><span class="n">level</span>
+                <span class="n">out_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">printing</span><span class="o">.</span><span class="n">JOB</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"md source"</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_own_md</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_own_md</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">md_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"all/position"</span><span class="p">)</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">job</span><span class="p">(</span>
+                <span class="n">__</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Analyzing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span><span class="si">}</span><span class="s2"> MD run"</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'s'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">: "</span>
+                    <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">),</span>
+                    <span class="n">indent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">job_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">job_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">job_level</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">out_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">out_level</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"No MD run finished, so there is nothing to analyze."</span><span class="p">)</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">configuration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_system_configuration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">P</span><span class="o">=</span><span class="n">P</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">next_node</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_own_md</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run the MD in the sub-flowchart several times, keeping each run's file."""</span>
+        <span class="n">changes</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="n">request_sampling</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">md_requirements</span><span class="p">(</span><span class="n">P</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">changes</span><span class="p">:</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">job</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Note: </span><span class="si">{</span><span class="n">change</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">"The MD in the sub-flowchart cannot provide what is needed: "</span>
+                <span class="o">+</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">first_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="s2">"1"</span><span class="p">)</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">first_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">"The sub-flowchart of the Liquid Structure step is empty."</span>
+            <span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">first_node</span>
+        <span class="k">while</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">all_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_options</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowchart</span><span class="o">.</span><span class="n">executor</span>
+
+        <span class="n">nruns</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"nruns"</span><span class="p">]</span>
+        <span class="n">fmt_run</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"0</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nruns</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nruns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">run_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"run_</span><span class="si">{</span><span class="n">run</span><span class="si">:{</span><span class="n">fmt_run</span><span class="si">}}</span><span class="s2">"</span>
+            <span class="n">run_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">run_dir</span> <span class="o">/</span> <span class="s2">"Run.out"</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">printing</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">)</span>
+            <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">"</span><span class="si">{message:s}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"{"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">flowchart</span><span class="o">.</span><span class="n">reset_visited</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_subids</span><span class="p">((</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"run_</span><span class="si">{</span><span class="n">run</span><span class="si">:{</span><span class="n">fmt_run</span><span class="si">}}</span><span class="s2">"</span><span class="p">))</span>
+
+            <span class="n">node</span> <span class="o">=</span> <span class="n">first_node</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">while</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">DeprecationWarning</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Deprecation warning: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">printer</span><span class="o">.</span><span class="n">job</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Caught exception in run </span><span class="si">{</span><span class="n">run</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_dir</span> <span class="o">/</span> <span class="s2">"stderr.out"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">fd</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">"continue"</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="s2">"errors"</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="k">elif</span> <span class="s2">"exit"</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="s2">"errors"</span><span class="p">]:</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_read_run</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_handler</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The md.h5md of one run of the sub-flowchart with the positions."""</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">run_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"**/md.h5md"</span><span class="p">)):</span>
+            <span class="k">with</span> <span class="n">open_md</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">has_particles</span><span class="p">(</span><span class="s2">"position"</span><span class="p">):</span>
+                    <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"There are no positions for run </span><span class="si">{</span><span class="n">run</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># The analysis</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LiquidStructure.analyze">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.analyze">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Analyze, print, plot and store the structure.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        P : dict</span>
+<span class="sd">            The values of the parameters.</span>
+<span class="sd">        configuration : molsystem._Configuration</span>
+<span class="sd">            The configuration that was simulated: its atoms are in the order of the</span>
+<span class="sd">            atoms in the MD files.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">configuration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"There is no structure to analyze."</span><span class="p">)</span>
+        <span class="n">species</span> <span class="o">=</span> <span class="n">Species</span><span class="p">(</span>
+            <span class="n">configuration</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">symbols</span><span class="p">,</span> <span class="n">configuration</span><span class="o">.</span><span class="n">find_molecules</span><span class="p">(</span><span class="n">as_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">cutoffs</span> <span class="o">=</span> <span class="n">parse_cutoffs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"cutoffs"</span><span class="p">])</span>
+        <span class="n">nruns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span>
+        <span class="n">n_blocks</span> <span class="o">=</span> <span class="n">nruns</span> <span class="k">if</span> <span class="n">nruns</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">P</span><span class="p">[</span><span class="s2">"number of blocks"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">nruns</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">P</span><span class="p">[</span><span class="s2">"md source"</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_own_md</span><span class="p">:</span>
+            <span class="n">n_blocks</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># Look at the first file for the cell, the charges and the frames</span>
+        <span class="k">with</span> <span class="n">open_md</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
+            <span class="n">periodic</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">periodic</span>
+            <span class="n">charges</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">charges</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+                <span class="n">universe</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">universe</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+            <span class="n">n_file</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">n_atoms</span>
+        <span class="k">if</span> <span class="n">n_file</span> <span class="o">!=</span> <span class="n">species</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"The MD has </span><span class="si">{</span><span class="n">n_file</span><span class="si">}</span><span class="s2"> atoms but the structure </span><span class="si">{</span><span class="n">species</span><span class="o">.</span><span class="n">n_atoms</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+
+        <span class="c1"># The pairs of sites</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"pairs"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"the pairs given"</span><span class="p">:</span>
+                <span class="n">site_pairs</span> <span class="o">=</span> <span class="n">parse_pairs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"pair list"</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">site_pairs</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">element_pairs</span><span class="p">()</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">site</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">universe</span><span class="p">),</span> <span class="n">species</span><span class="o">.</span><span class="n">site</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">universe</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">site_pairs</span>
+            <span class="p">]</span>
+        <span class="k">except</span> <span class="n">AnalysisError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="c1"># The ions, for the pairing and as default solutes</span>
+        <span class="n">cations</span><span class="p">,</span> <span class="n">anions</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">ions</span><span class="p">(</span><span class="n">charges</span><span class="p">)</span>
+        <span class="n">solutes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"solvation shells"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"solutes"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"the solutes given"</span><span class="p">:</span>
+                <span class="n">solutes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="s2">"solute list"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">solutes</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">species</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">': there is no solute </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">; the species "</span>
+                            <span class="sa">f</span><span class="s2">"are </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+                        <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">solutes</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">name</span>
+                    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cations</span> <span class="o">+</span> <span class="n">anions</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">atom_species</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="o">==</span> <span class="n">species</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="p">]</span>
+
+        <span class="c1"># The radial distribution functions needed: those asked for, and for the</span>
+        <span class="c1"># cutoffs of the ion pairing and shells, cation-anion and solute-solvent</span>
+        <span class="n">r_max</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"r max"</span><span class="p">]</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"Å"</span><span class="p">)</span>
+        <span class="n">dr</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"bin width"</span><span class="p">]</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"Å"</span><span class="p">)</span>
+        <span class="n">rdfs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">atoms_a</span><span class="p">,</span> <span class="n">atoms_b</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="n">rdfs</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span> <span class="o">=</span> <span class="n">RDF</span><span class="p">(</span><span class="n">atoms_a</span><span class="p">,</span> <span class="n">atoms_b</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">dr</span><span class="p">)</span>
+        <span class="n">ion_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]:</span>
+            <span class="n">ion_pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cations</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">anions</span><span class="p">]</span>
+        <span class="n">shell_pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">solutes</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">species</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">s</span><span class="p">]</span>
+        <span class="c1"># These use the heavy atoms of each species, so that a molecule is in a</span>
+        <span class="c1"># shell when its coordinating atoms are, not merely its hydrogens</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">ion_pairs</span> <span class="o">+</span> <span class="n">shell_pairs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="p">:</span>
+                <span class="n">rdfs</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span> <span class="o">=</span> <span class="n">RDF</span><span class="p">(</span>
+                    <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">a</span><span class="p">),</span>
+                    <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">b</span><span class="p">),</span>
+                    <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span>
+                    <span class="n">r_max</span><span class="p">,</span>
+                    <span class="n">dr</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># The range is at most half the shortest width of the cell</span>
+        <span class="k">if</span> <span class="n">periodic</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">r_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r_max</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">_shortest_width</span><span class="p">(</span><span class="n">box</span><span class="p">))</span>
+            <span class="n">rdfs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">RDF</span><span class="p">(</span><span class="n">rdf</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">rdf</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">dr</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rdf</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+
+        <span class="c1"># The first pass over the frames: the radial distribution functions</span>
+        <span class="n">n_frames</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">rdf</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">rdf</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
+            <span class="n">n_frames</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Analyzed </span><span class="si">{</span><span class="n">n_frames</span><span class="si">}</span><span class="s2"> frames from </span><span class="si">{</span><span class="n">nruns</span><span class="si">}</span><span class="s2"> run</span><span class="si">{</span><span class="s1">'s'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">nruns</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">", every </span><span class="si">{</span><span class="n">dt</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2"> ps"</span>
+        <span class="k">if</span> <span class="n">n_blocks</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"; the errors are the standard errors over the </span><span class="si">{</span><span class="n">nruns</span><span class="si">}</span><span class="s2"> runs"</span>
+                <span class="k">if</span> <span class="n">nruns</span> <span class="o">&gt;</span> <span class="mi">1</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">"; the errors are from </span><span class="si">{</span><span class="n">n_blocks</span><span class="si">}</span><span class="s2"> blocks of frames"</span>
+            <span class="p">)</span>
+        <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="n">text</span> <span class="o">+</span> <span class="s2">"."</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">periodic</span><span class="p">:</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                <span class="n">__</span><span class="p">(</span>
+                    <span class="s2">"The system is not periodic, so there are no radial "</span>
+                    <span class="s2">"distribution functions: the coordination numbers and ion "</span>
+                    <span class="s2">"pairing use the cutoffs given."</span><span class="p">,</span>
+                    <span class="n">indent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">rdf_results</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">rdf</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rdf</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="c1"># The ion pairing and shells read the frames again, with the cutoffs</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">)</span>  <span class="c1"># noqa: E731</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">"coordination numbers"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordination</span><span class="p">(</span>
+            <span class="n">pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">periodic</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">ion_pairs</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ion_pairing</span><span class="p">(</span>
+                <span class="n">ion_pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">n_blocks</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">solutes</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">"solvation shells"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shells</span><span class="p">(</span>
+                <span class="n">P</span><span class="p">,</span>
+                <span class="n">solutes</span><span class="p">,</span>
+                <span class="n">rdf_results</span><span class="p">,</span>
+                <span class="n">cutoffs</span><span class="p">,</span>
+                <span class="n">species</span><span class="p">,</span>
+                <span class="n">frames</span><span class="p">,</span>
+                <span class="n">n_blocks</span><span class="p">,</span>
+                <span class="n">dt</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">)</span>
+
+        <span class="c1"># The results, for variables, tables and properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_model</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"n_frames"</span><span class="p">:</span> <span class="n">n_frames</span><span class="p">,</span> <span class="s2">"nruns"</span><span class="p">:</span> <span class="n">nruns</span><span class="p">}</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"store"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">configuration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_results</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coordination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">periodic</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The peaks, minima and coordination numbers of the pairs asked for."""</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"Pair"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"Peak (Å)"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"g(peak)"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"Minimum (Å)"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"Cutoff (Å)"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"CN"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">"±"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">rdf_results</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
+            <span class="n">fixed</span> <span class="o">=</span> <span class="n">find_cutoff</span><span class="p">(</span><span class="n">cutoffs</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">pm</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"peak"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"peak_height"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pm</span> <span class="o">=</span> <span class="n">peak_and_minimum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">"peak"</span><span class="p">:</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">],</span>
+                        <span class="s2">"peak height"</span><span class="p">:</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"peak_height"</span><span class="p">],</span>
+                        <span class="s2">"minimum"</span><span class="p">:</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"minimum"</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+            <span class="n">cutoff</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">fixed</span> <span class="k">else</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"minimum"</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">n</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">coordination_number</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">)</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"cutoff"</span><span class="p">:</span> <span class="n">cutoff</span><span class="p">,</span> <span class="s2">"CN"</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span> <span class="s2">"CN,stderr"</span><span class="p">:</span> <span class="n">err</span><span class="p">})</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="ow">not</span> <span class="n">fixed</span>
+                    <span class="ow">and</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">cutoff</span> <span class="o">&gt;</span> <span class="mf">1.6</span> <span class="o">*</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span>
+                <span class="p">):</span>
+                    <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"The first minimum of </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">cutoff</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å, is far beyond "</span>
+                        <span class="sa">f</span><span class="s2">"its peak at </span><span class="si">{</span><span class="n">pm</span><span class="p">[</span><span class="s1">'peak'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å, so it may be a later "</span>
+                        <span class="s2">"minimum (a solvent-shared peak, for example). Consider a "</span>
+                        <span class="s2">"fixed cutoff."</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">periodic</span><span class="p">:</span>
+                <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: no cutoff was given, so no coordination number."</span>
+                <span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"Pair"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"Peak (Å)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">],</span> <span class="n">digits</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"g(peak)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="n">pm</span><span class="p">[</span><span class="s2">"peak_height"</span><span class="p">],</span> <span class="n">digits</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"Minimum (Å)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="n">pm</span><span class="p">[</span><span class="s2">"minimum"</span><span class="p">],</span> <span class="n">digits</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"Cutoff (Å)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">fmt</span><span class="p">(</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="s2">" (given)"</span> <span class="k">if</span> <span class="n">fixed</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">fmt</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CN"</span><span class="p">),</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CN,stderr"</span><span class="p">),</span> <span class="n">digits</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"CN"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"±"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">"Radial distribution functions"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">notes</span><span class="p">:</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The frames of every run: positions (Å), box and volume (Å^3), the box</span>
+<span class="sd">        and volume None without a cell. Sets ``self._dt``, the interval between</span>
+<span class="sd">        frames in ps."""</span>
+        <span class="n">dts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">open_md</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
+                <span class="c1"># The interval between frames from the file's own time axis:</span>
+                <span class="c1"># MDAnalysis's H5MD reader does not find it</span>
+                <span class="n">times</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">first</span><span class="p">[</span><span class="s2">"particles/all/position/time"</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">unit</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"unit"</span><span class="p">,</span> <span class="s2">"ps"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                    <span class="n">dts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">))</span>
+                <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+                    <span class="n">u</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">universe</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">:</span>
+                    <span class="n">box</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">dimensions</span> <span class="k">if</span> <span class="n">periodic</span> <span class="k">else</span> <span class="kc">None</span>
+                    <span class="n">volume</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">volume</span> <span class="k">if</span> <span class="n">periodic</span> <span class="k">else</span> <span class="kc">None</span>
+                    <span class="k">yield</span> <span class="n">ts</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span>
+                    <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                        <span class="k">break</span>
+            <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dts</span><span class="p">))</span> <span class="k">if</span> <span class="n">dts</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ion_pairing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ion_pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Classify the cations of each cation-anion pair in every frame."""</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Pair"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"r1 (Å)"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"r2 (Å)"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">PAIR_CLASSES</span><span class="p">:</span>
+            <span class="n">table</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cation</span><span class="p">,</span> <span class="n">anion</span> <span class="ow">in</span> <span class="n">ion_pairs</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cation</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">anion</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">rdf_results</span><span class="p">[(</span><span class="n">cation</span><span class="p">,</span> <span class="n">anion</span><span class="p">)]</span>
+            <span class="n">fixed</span> <span class="o">=</span> <span class="n">find_cutoff</span><span class="p">(</span><span class="n">cutoffs</span><span class="p">,</span> <span class="n">cation</span><span class="p">,</span> <span class="n">anion</span><span class="p">)</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="n">r2</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">fixed</span><span class="p">:</span>
+                <span class="n">r1</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">r2</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fixed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pm</span> <span class="o">=</span> <span class="n">peak_and_minimum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">r1</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"minimum"</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">r2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">r2</span> <span class="o">=</span> <span class="n">second_minimum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">],</span> <span class="n">r1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"error"</span><span class="p">:</span> <span class="s2">"no contact cutoff"</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">r2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># No solvent-separated class without a second cutoff</span>
+                <span class="n">r2</span> <span class="o">=</span> <span class="n">r1</span>
+                <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: the g(r) has no clear second minimum, so solvent-"</span>
+                    <span class="s2">"separated pairs (SSIP) are not told apart from free cations. "</span>
+                    <span class="sa">f</span><span class="s2">"Give two cutoffs to separate them, e.g. '</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r1</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> 5.6'."</span>
+                <span class="p">)</span>
+            <span class="n">cat_atoms</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">cation</span><span class="p">)</span>
+            <span class="n">an_atoms</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">anion</span><span class="p">)</span>
+            <span class="n">an_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">[</span><span class="n">an_atoms</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span>
+                <span class="mi">1</span>
+            <span class="p">]</span>
+            <span class="n">acc</span> <span class="o">=</span> <span class="n">PairingAccumulator</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">():</span>
+                <span class="n">acc</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span>
+                    <span class="n">classify_ion_pairs</span><span class="p">(</span>
+                        <span class="n">x</span><span class="p">[</span><span class="n">cat_atoms</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">an_atoms</span><span class="p">],</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">anion_ids</span><span class="o">=</span><span class="n">an_ids</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">acc</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r1"</span><span class="p">:</span> <span class="n">r1</span><span class="p">,</span> <span class="s2">"r2"</span><span class="p">:</span> <span class="n">r2</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="p">}</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"Pair"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"r1 (Å)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">"r2 (Å)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">r2</span> <span class="o">!=</span> <span class="n">r1</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">PAIR_CLASSES</span><span class="p">:</span>
+                <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">fmt</span><span class="p">(</span>
+                    <span class="n">r</span><span class="p">[</span><span class="s2">"fractions"</span><span class="p">][</span><span class="n">c</span><span class="p">],</span>
+                    <span class="kc">None</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"errors"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">"errors"</span><span class="p">][</span><span class="n">c</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">table</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">" ± </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">e</span> <span class="k">else</span> <span class="s2">""</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">table</span><span class="p">[</span><span class="s2">"Pair"</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">"Ion pairing (fraction of cations)"</span><span class="p">)</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                <span class="n">__</span><span class="p">(</span>
+                    <span class="s2">"free: no anion within r2; SSIP: none within r1, one or more "</span>
+                    <span class="s2">"within r2; CIP: one anion within r1, touching no other cation; "</span>
+                    <span class="s2">"AGG: an anion within r1 shared with another cation, or more "</span>
+                    <span class="s2">"than one."</span><span class="p">,</span>
+                    <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
+                <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">))</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">solutes</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The solvation shells of each solute."""</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">solute</span> <span class="ow">in</span> <span class="n">solutes</span><span class="p">:</span>
+            <span class="n">solute_atoms</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">solute</span><span class="p">)</span>
+            <span class="n">solute_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+                <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">[</span><span class="n">solute_atoms</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">solvents</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">skipped</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">species</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">solute</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">fixed</span> <span class="o">=</span> <span class="n">find_cutoff</span><span class="p">(</span><span class="n">cutoffs</span><span class="p">,</span> <span class="n">solute</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">cutoff</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">fixed</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">rdf_results</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">solute</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">peak_and_minimum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])[</span><span class="s2">"minimum"</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">skipped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">solvents</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">[</span><span class="n">atoms</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">solvents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">solute</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"error"</span><span class="p">:</span> <span class="s2">"no cutoffs for any solvent"</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">acc</span> <span class="o">=</span> <span class="n">ShellAccumulator</span><span class="p">(</span><span class="n">solute_atoms</span><span class="p">,</span> <span class="n">solute_ids</span><span class="p">,</span> <span class="n">solvents</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">():</span>
+                <span class="n">acc</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+            <span class="n">residence_dt</span> <span class="o">=</span> <span class="n">dt</span> <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">acc</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">residence_dt</span><span class="p">)</span>
+            <span class="n">r</span><span class="p">[</span><span class="s2">"cutoffs"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">solvents</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">solute</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Solvent"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"Cutoff (Å)"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"CN"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"±"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"Paired"</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"residence"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">"Residence (ps)"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">:</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">"Solvent"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">"Cutoff (Å)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'cutoffs'</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">fmt</span><span class="p">(</span>
+                    <span class="n">r</span><span class="p">[</span><span class="s2">"coordination"</span><span class="p">][</span><span class="n">name</span><span class="p">],</span>
+                    <span class="p">(</span>
+                        <span class="kc">None</span>
+                        <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"coordination_err"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">"coordination_err"</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="n">digits</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">"CN"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">"±"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">"Paired"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'pairing'</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"residence"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">"residence"</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+                    <span class="n">table</span><span class="p">[</span><span class="s2">"Residence (ps)"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"The solvation shell of </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">composition</span><span class="p">,</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="n">r</span><span class="p">[</span><span class="s2">"speciation"</span><span class="p">][:</span><span class="mi">5</span><span class="p">]:</span>
+                <span class="n">shell</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">name</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">composition</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">fraction</span><span class="si">:</span><span class="s2">6.3f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">shell</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'none'</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                <span class="n">__</span><span class="p">(</span>
+                    <span class="s2">"The most common shells:</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span>
+                    <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                    <span class="n">wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">dedent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">skipped</span><span class="p">:</span>
+                <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                    <span class="n">__</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"No cutoff for </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">skipped</span><span class="p">)</span><span class="si">}</span><span class="s2"> around </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">, so "</span>
+                        <span class="s2">"they are left out."</span><span class="p">,</span>
+                        <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dt</span> <span class="o">&gt;</span> <span class="mf">0.15</span><span class="p">:</span>
+                <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                    <span class="n">__</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"The frames are </span><span class="si">{</span><span class="n">dt</span><span class="si">:</span><span class="s2">.2g</span><span class="si">}</span><span class="s2"> ps apart; the residence times "</span>
+                        <span class="sa">f</span><span class="s2">"need frames every </span><span class="si">{</span><span class="n">RESIDENCE_INTERVAL</span><span class="si">:</span><span class="s2">~P</span><span class="si">}</span><span class="s2"> or so."</span><span class="p">,</span>
+                        <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">tabulate</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">"keys"</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">"simple_outline"</span><span class="p">,</span> <span class="n">disable_numparse</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+            <span class="n">__</span><span class="p">(</span>
+                <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">title</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
+                <span class="n">wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">dedent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""A graph of g(r) and the running coordination number for each pair."""</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">rdf_results</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">figure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_figure</span><span class="p">(</span>
+                <span class="n">module_path</span><span class="o">=</span><span class="p">(</span><span class="s2">"seamm"</span><span class="p">,),</span>
+                <span class="n">template</span><span class="o">=</span><span class="s2">"line.graph_template"</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">plot</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">add_plot</span><span class="p">(</span><span class="s2">"rdf"</span><span class="p">)</span>
+            <span class="n">x_axis</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">add_axis</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"r (Å)"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">y_axis</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">add_axis</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"g(r)"</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="n">x_axis</span><span class="p">)</span>
+                <span class="n">x_axis</span><span class="o">.</span><span class="n">anchor</span> <span class="o">=</span> <span class="n">y_axis</span>
+                <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g_err"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">upper</span> <span class="o">=</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g_err"</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="n">lower</span> <span class="o">=</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g_err"</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="n">plot</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                        <span class="n">x_axis</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span>
+                        <span class="n">y_axis</span><span class="o">=</span><span class="n">y_axis</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s2">"95%"</span><span class="p">,</span>
+                        <span class="n">x</span><span class="o">=</span><span class="n">r</span> <span class="o">+</span> <span class="n">r</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">xlabel</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span>
+                        <span class="n">xunits</span><span class="o">=</span><span class="s2">"Å"</span><span class="p">,</span>
+                        <span class="n">y</span><span class="o">=</span><span class="n">upper</span> <span class="o">+</span> <span class="n">lower</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">ylabel</span><span class="o">=</span><span class="s2">"95%"</span><span class="p">,</span>
+                        <span class="n">yunits</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s2">"rgba(211,211,211,0.5)"</span><span class="p">,</span>
+                        <span class="n">fill</span><span class="o">=</span><span class="s2">"toself"</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="n">plot</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                    <span class="n">x_axis</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span>
+                    <span class="n">y_axis</span><span class="o">=</span><span class="n">y_axis</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">"g(r)"</span><span class="p">,</span>
+                    <span class="n">x</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                    <span class="n">xlabel</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span>
+                    <span class="n">xunits</span><span class="o">=</span><span class="s2">"Å"</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"g(r)"</span><span class="p">,</span>
+                    <span class="n">yunits</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">"#4dbd74"</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">y2_axis</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">add_axis</span><span class="p">(</span>
+                    <span class="s2">"y"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"n(r)"</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">overlaying</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">"right"</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y2_axis</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">add_axis</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"n(r)"</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="n">x_axis</span><span class="p">)</span>
+                <span class="n">x_axis</span><span class="o">.</span><span class="n">anchor</span> <span class="o">=</span> <span class="n">y2_axis</span>
+            <span class="n">plot</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                <span class="n">x_axis</span><span class="o">=</span><span class="n">x_axis</span><span class="p">,</span>
+                <span class="n">y_axis</span><span class="o">=</span><span class="n">y2_axis</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"n(r)"</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                <span class="n">xlabel</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span>
+                <span class="n">xunits</span><span class="o">=</span><span class="s2">"Å"</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">"n"</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="n">ylabel</span><span class="o">=</span><span class="s2">"n(r)"</span><span class="p">,</span>
+                <span class="n">yunits</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">grid_plots</span><span class="p">(</span><span class="s2">"rdf"</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"("</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">")"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">name</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="ow">or</span> <span class="n">c</span> <span class="ow">in</span> <span class="s2">"_-"</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"rdf_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.graph"</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"html"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">"html"</span><span class="p">]:</span>
+                <span class="n">figure</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="s2">"line.html_template"</span>
+                <span class="n">figure</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">".html"</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Store the coordination numbers and pairing as properties (JSON)."""</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="n">properties</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"coordination numbers"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CN"</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s2">"coordination numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="s2">"ion pairing"</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fractions"</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">#Liquid Structure#</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">properties</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                <span class="n">properties</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"json"</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">"The </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> of the liquid (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+                    <span class="n">noerror</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">properties</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The model (forcefield or model chemistry) of the MD, for properties."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_exists</span><span class="p">(</span><span class="s2">"_model_chemistry"</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s2">"_model_chemistry"</span><span class="p">)[</span><span class="s2">"level"</span><span class="p">]</span>
+            <span class="n">ff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s2">"_forcefield"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ff</span> <span class="o">==</span> <span class="s2">"OpenKIM"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">"OpenKIM/"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s2">"_OpenKIM_Potential"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ff</span> <span class="o">==</span> <span class="s2">"PyTorch"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">"PyTorch/"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s2">"_pytorch_model"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ff</span><span class="o">.</span><span class="n">current_forcefield</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"unknown"</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># What the MD must provide</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LiquidStructure.md_requirements">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.md_requirements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">md_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""What the analysis needs from the MD: positions every ps or so (every</span>
+<span class="sd">        0.1 ps for the residence times)."""</span>
+        <span class="k">if</span> <span class="n">P</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="p">(</span><span class="s2">"frame interval"</span><span class="p">)</span>
+            <span class="n">residence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="p">(</span><span class="s2">"residence times"</span><span class="p">)</span>
+            <span class="n">shells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="p">(</span><span class="s2">"solvation shells"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"frame interval"</span><span class="p">]</span>
+            <span class="n">residence</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]</span>
+            <span class="n">shells</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"solvation shells"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">"ps"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="s2">"m_as"</span><span class="p">):</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">interval</span><span class="p">),</span> <span class="s2">"ps"</span><span class="p">)</span>
+        <span class="n">why</span> <span class="o">=</span> <span class="s2">"the structure"</span>
+        <span class="k">if</span> <span class="n">residence</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">shells</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">interval</span> <span class="o">&gt;</span> <span class="n">RESIDENCE_INTERVAL</span><span class="p">:</span>
+                <span class="n">interval</span> <span class="o">=</span> <span class="n">RESIDENCE_INTERVAL</span>
+                <span class="n">why</span> <span class="o">=</span> <span class="s2">"the residence times in the solvation shells"</span>
+        <span class="k">return</span> <span class="n">Requirements</span><span class="p">(</span>
+            <span class="n">needs</span><span class="o">=</span><span class="p">[</span><span class="n">Need</span><span class="p">(</span><span class="s2">"all/position"</span><span class="p">,</span> <span class="n">max_time</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">why</span><span class="o">=</span><span class="n">why</span><span class="p">)],</span>
+            <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_static</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""A parameter's value without evaluating variables, or None."""</span>
+        <span class="n">parameter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_expr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">parameter</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LiquidStructure.check_flowchart">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.check_flowchart">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_flowchart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preceding</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Check, before the job runs, that the MD will sample what is needed and</span>
+<span class="sd">        that the pairs and cutoffs make sense."""</span>
+        <span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">parse</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"cutoffs"</span><span class="p">,</span> <span class="n">parse_cutoffs</span><span class="p">),</span> <span class="p">(</span><span class="s2">"pair list"</span><span class="p">,</span> <span class="n">parse_pairs</span><span class="p">)):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">AnalysisError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="p">(</span><span class="s2">"md source"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">check_md_flowchart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preceding</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">md_requirements</span><span class="p">(),</span> <span class="n">source</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">problems</span></div>
+
+
+<div class="viewcode-block" id="LiquidStructure.check_configuration">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.check_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Called by an MD step before it runs MD that this step will analyze.</span>
+<span class="sd">        Any system can be analyzed; without a cell, only with cutoffs given."""</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="LiquidStructure.set_id">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.set_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">"""Sequentially number the subnodes"""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">visited</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visited</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="n">node_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_subids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LiquidStructure.set_subids">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.set_subids">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_subids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">"""Set the ids of the nodes in the subflowchart"""</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subflowchart</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="s2">"1"</span><span class="p">)</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">set_id</span><span class="p">((</span><span class="o">*</span><span class="n">node_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_shortest_width</span><span class="p">(</span><span class="n">dimensions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The shortest perpendicular width of a cell given as (a, b, c, alpha, beta,</span>
+<span class="sd">    gamma)."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">MDAnalysis.lib.mdamath</span><span class="w"> </span><span class="kn">import</span> <span class="n">triclinic_vectors</span>
+
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">triclinic_vectors</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span>
+        <span class="n">volume</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)),</span>
+        <span class="n">volume</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="p">)),</span>
+        <span class="n">volume</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span>
+    <span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
