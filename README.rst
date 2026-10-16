@@ -26,7 +26,8 @@ SEAMM Liquid Structure Plug-in
    :target: https://pypi.python.org/pypi/liquid_structure_step
    :alt: PyPi VERSION
 
-A SEAMM plug-in for Liquid Structure
+A SEAMM plug-in for the structure of liquids and solutions from molecular dynamics:
+radial distribution functions, coordination numbers, ion pairing and solvation shells.
 
 * Free software: BSD-3-Clause
 * Documentation: https://molssi-seamm.github.io/liquid_structure_step/index.html
@@ -35,7 +36,13 @@ A SEAMM plug-in for Liquid Structure
 Features
 --------
 
-* Please edit this section!
+* Partial radial distribution functions with errors, their first peaks and minima, and
+  coordination numbers, with fixed cutoffs where the minima mislead.
+* The pairing of ions: free, solvent-separated (SSIP), contact (CIP) and aggregated
+  (AGG) pairs, also for clusters.
+* Solvation shells: coordination numbers per solvent, the most common shells, pairing,
+  and residence times.
+* Runs its own MD or analyzes MD earlier in the flowchart, from SEAMM's H5MD files.
 
 Acknowledgements
 ----------------

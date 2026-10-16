@@ -32,8 +32,11 @@ class LiquidStructureStep(object):
     """
 
     my_description = {
-        "description": "An interface for Liquid Structure",
-        "group": "Simulations",
+        "description": (
+            "The structure of liquids and solutions from MD: radial distribution "
+            "functions, coordination numbers, ion pairing and solvation shells"
+        ),
+        "group": "Analysis",
         "name": "Liquid Structure",
     }
 
