@@ -130,16 +130,41 @@ type : str
 units : str
     Optional units for the result. If present, the value should be in these units.
 """
-# metadata["results"] = {
-#     "total_energy": {
-#         "calculation": [
-#             "energy",
-#             "optimization",
-#         ],
-#         "description": "The total energy",
-#         "dimensionality": "scalar",
-#         "property": "total energy#LiquidStructure#{model}",
-#         "type": "float",
-#         "units": "E_h",
-#     },
-# }
+metadata["results"] = {
+    "n_frames": {
+        "description": "The number of frames analyzed",
+        "dimensionality": "scalar",
+        "type": "integer",
+    },
+    "nruns": {
+        "description": "The number of MD runs analyzed",
+        "dimensionality": "scalar",
+        "type": "integer",
+    },
+    "coordination numbers": {
+        "description": (
+            "For each pair of sites, the first peak and minimum of g(r), the cutoff "
+            "and the coordination number with its standard error"
+        ),
+        "dimensionality": "{pair: {key: value}}",
+        "property": "coordination numbers#Liquid Structure#{model}",
+        "type": "json",
+    },
+    "ion pairing": {
+        "description": (
+            "For each cation-anion pair, the cutoffs and the fractions of the "
+            "cations that are free, SSIP, CIP and AGG, with their errors"
+        ),
+        "dimensionality": "{pair: {key: value}}",
+        "property": "ion pairing#Liquid Structure#{model}",
+        "type": "json",
+    },
+    "solvation shells": {
+        "description": (
+            "For each solute, the coordination number and pairing of each solvent, "
+            "the most common shells, and the residence times"
+        ),
+        "dimensionality": "{solute: {key: value}}",
+        "type": "json",
+    },
+}
