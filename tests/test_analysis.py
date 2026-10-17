@@ -15,6 +15,7 @@ from liquid_structure_step.analysis import (
     ShellAccumulator,
     Species,
     classify_ion_pairs,
+    coordination_by_block,
     coordination_number,
     hill_formula,
     parse_cutoffs,
@@ -22,6 +23,7 @@ from liquid_structure_step.analysis import (
     peak_and_minimum,
     residence_time,
     second_minimum,
+    split_blocks,
     split_pair,
 )
 
@@ -100,7 +102,7 @@ def test_lattice_coordination_numbers():
     n = len(xyz)
     rdf = RDF(np.arange(n), np.arange(n), np.arange(n), r_max=8.0, dr=0.05)
     rdf.add_frame(xyz, box=box, volume=box[0] ** 3)
-    res = rdf.result(n_blocks=1)
+    res = rdf.result(blocks=1)
     assert [coordination_number(res, c)[0] for c in (3.1, 4.3, 5.3)] == [
         6.0,
         18.0,
@@ -117,11 +119,16 @@ def test_ideal_gas():
     rdf = RDF(np.arange(n), np.arange(n), np.arange(n), r_max=8.0, dr=0.1)
     for _ in range(20):
         rdf.add_frame(rng.uniform(0, L, (n, 3)), box=box, volume=L**3)
-    res = rdf.result(n_blocks=5)
+    res = rdf.result(blocks=5)
     assert res["g"][20:].mean() == pytest.approx(1.0, abs=0.01)
     cn, err = coordination_number(res, 5.0)
     expected = (n - 1) / L**3 * 4 / 3 * math.pi * 5.0**3
     assert abs(cn - expected) < 4 * err
+    # The blocks average to the whole, and give its error
+    by_block = coordination_by_block(res, 5.0)
+    assert len(by_block) == 5
+    assert np.mean(by_block) == pytest.approx(cn)
+    assert np.std(by_block, ddof=1) / math.sqrt(5) == pytest.approx(err)
     # The cross g(r) of two halves
     half = RDF(np.arange(500), np.arange(500, 1000), np.arange(n), r_max=8.0, dr=0.1)
     for _ in range(10):
@@ -204,7 +211,7 @@ def test_pairing_fractions():
     acc = PairingAccumulator()
     for _ in range(10):
         acc.add_frame(np.array(["CIP", "free", "free", "SSIP"], dtype=object))
-    r = acc.result(n_blocks=5)
+    r = acc.result(blocks=5)
     assert r["fractions"] == {"free": 0.5, "SSIP": 0.25, "CIP": 0.25, "AGG": 0.0}
     assert r["errors"]["free"] == pytest.approx(0.0)
 
@@ -229,13 +236,48 @@ def test_shells_and_speciation():
         x[1:4] = water_o
         x[4] = [0, 0, 3.0] if t % 2 == 0 else [0, 0, 8.0]
         acc.add_frame(x)
-    r = acc.result(n_blocks=1, dt=0.1)
+    r = acc.result(blocks=1, dt=0.1)
     assert r["coordination"] == {"H2O": 2.0, "Cl": 0.5}
     assert r["pairing"] == {"H2O": 1.0, "Cl": 0.5}
-    shells = {tuple(sorted(c.items())): f for c, f in r["speciation"]}
+    shells = {tuple(sorted(c.items())): f for c, f, _ in r["speciation"]}
     assert shells == {(("H2O", 2),): 0.5, (("Cl", 1), ("H2O", 2)): 0.5}
     # The waters never leave
     assert r["residence"]["H2O"] is None
+
+
+def test_shell_errors_from_runs():
+    """With the frames of two runs as the blocks, the errors are over the runs and
+    the residence times are not taken across the runs."""
+    acc = ShellAccumulator(
+        np.array([0]), np.array([0]), {"H2O": (np.array([1]), np.array([10]), 3.0)}
+    )
+    # Run 1: the water is in the shell in every frame; run 2: in none
+    for t in range(40):
+        x = np.zeros((2, 3))
+        x[1] = [2.0, 0, 0] if t < 20 else [8.0, 0, 0]
+        acc.add_frame(x)
+    r = acc.result(blocks=[20, 20], dt=0.1, runs=[20, 20])
+    assert r["n_blocks"] == 2
+    assert r["coordination"]["H2O"] == pytest.approx(0.5)
+    assert r["coordination_err"]["H2O"] == pytest.approx(0.5)
+    assert r["pairing_err"]["H2O"] == pytest.approx(0.5)
+    assert [e for _, _, e in r["speciation"]] == [pytest.approx(0.5)] * 2
+    # In run 1 the water never leaves; run 2 has no water in the shell
+    assert r["residence"]["H2O"] is None
+    assert r["residence_blocks"]["H2O"] == [None, None]
+
+
+def test_split_blocks():
+    rows = np.arange(10)
+    assert [b.tolist() for b in split_blocks(rows, 3)] == [
+        [0, 1, 2],
+        [3, 4, 5, 6],
+        [7, 8, 9],
+    ]
+    assert [len(b) for b in split_blocks(rows, [4, 6])] == [4, 6]
+    assert len(split_blocks(rows, 20)) == 10
+    with pytest.raises(ValueError):
+        split_blocks(rows, [4, 5])
 
 
 def test_residence_time():

@@ -2,6 +2,8 @@
 
 """This file contains metadata describing the results from LiquidStructure"""
 
+from seamm_md_analysis.step_support import state_results
+
 metadata = {}
 
 """Description of the computational models for LiquidStructure.
@@ -141,10 +143,24 @@ metadata["results"] = {
         "dimensionality": "scalar",
         "type": "integer",
     },
+    "error source": {
+        "description": (
+            "What the standard errors are from: the independent 'runs', or "
+            "'blocks' of a single run"
+        ),
+        "dimensionality": "scalar",
+        "type": "string",
+    },
+    "n_samples": {
+        "description": "The number of runs or blocks the standard errors are from",
+        "dimensionality": "scalar",
+        "type": "integer",
+    },
     "coordination numbers": {
         "description": (
-            "For each pair of sites, the first peak and minimum of g(r), the cutoff "
-            "and the coordination number with its standard error"
+            "For each pair of sites, the first peak (Å), its height and the first "
+            "minimum (Å) of g(r), the cutoff (Å) and the coordination number (CN), "
+            "each with its standard error (e.g. 'CN,stderr')"
         ),
         "dimensionality": "{pair: {key: value}}",
         "property": "coordination numbers#Liquid Structure#{model}",
@@ -152,8 +168,9 @@ metadata["results"] = {
     },
     "ion pairing": {
         "description": (
-            "For each cation-anion pair, the cutoffs and the fractions of the "
-            "cations that are free, SSIP, CIP and AGG, with their errors"
+            "For each cation-anion pair, the cutoffs r1 and r2 (Å) and the "
+            "fractions of the cations that are free, SSIP, CIP and AGG, with their "
+            "standard errors ('fractions,stderr')"
         ),
         "dimensionality": "{pair: {key: value}}",
         "property": "ion pairing#Liquid Structure#{model}",
@@ -161,10 +178,12 @@ metadata["results"] = {
     },
     "solvation shells": {
         "description": (
-            "For each solute, the coordination number and pairing of each solvent, "
-            "the most common shells, and the residence times"
+            "For each solute, the cutoff, coordination number and pairing of each "
+            "species, the most common shells, and the residence times (ps), each "
+            "with its standard error (e.g. 'coordination,stderr')"
         ),
         "dimensionality": "{solute: {key: value}}",
         "type": "json",
     },
+    **state_results,
 }

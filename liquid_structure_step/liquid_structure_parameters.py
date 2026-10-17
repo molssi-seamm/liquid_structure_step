@@ -5,7 +5,7 @@ Control parameters for the Liquid Structure step in a SEAMM flowchart
 
 import logging
 import seamm
-from seamm_md_analysis.step_support import run_own_md, source_parameters
+from seamm_md_analysis.step_support import source_parameters
 
 logger = logging.getLogger(__name__)
 
@@ -14,37 +14,12 @@ class LiquidStructureParameters(seamm.Parameters):
     """
     The control parameters for Liquid Structure.
 
-    The MD to analyze comes either from this step's sub-flowchart, run several
-    times as independent runs, or from MD run earlier in the flowchart or in other
-    jobs (see seamm_md_analysis.step_support.source_parameters).
+    The MD to analyze is run earlier in the flowchart -- in a Loop for independent
+    runs -- or in other jobs (see seamm_md_analysis.step_support.source_parameters).
     """
 
     parameters = {
         **source_parameters("the structure"),
-        "nruns": {
-            "default": "3",
-            "kind": "integer",
-            "default_units": "",
-            "enumeration": tuple(),
-            "format_string": "",
-            "description": "Number of runs to average:",
-            "help_text": "The number of independent MD runs to average.",
-            "applies_when": {"md source": run_own_md},
-        },
-        "errors": {
-            "default": "continue to next run",
-            "kind": "string",
-            "default_units": "",
-            "enumeration": (
-                "continue to next run",
-                "exit the loop",
-                "stop the job",
-            ),
-            "format_string": "",
-            "description": "On errors",
-            "help_text": "What to do if a run of the MD fails.",
-            "applies_when": {"md source": run_own_md},
-        },
         "frame interval": {
             "default": 1.0,
             "kind": "float",
@@ -141,9 +116,9 @@ class LiquidStructureParameters(seamm.Parameters):
             "format_string": "s",
             "description": "Solvation shells:",
             "help_text": (
-                "Analyze the solvation shells of the solutes with SolvationAnalysis: "
-                "coordination numbers, the shells' composition, and pairing. Only "
-                "for periodic systems."
+                "Analyze the solvation shells of the solutes: the coordination "
+                "number of each species, the shells' composition, and pairing. "
+                "Without a periodic cell, only for the species given fixed cutoffs."
             ),
         },
         "solutes": {
