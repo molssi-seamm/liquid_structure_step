@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>liquid_structure_step &#8212; SEAMM Liquid Structure Plug-in 2026.10.16 documentation</title>
+    <title>liquid_structure_step &#8212; SEAMM Liquid Structure Plug-in 2026.10.17 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=5aae1070"></script>
+    <script src="../_static/documentation_options.js?v=fed69469"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.16" />
+  <meta name="docsearch:version" content="2026.10.17" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -554,6 +554,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.classify_ion_pairs"><code class="docutils literal notranslate"><span class="pre">classify_ion_pairs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.coordination_by_block"><code class="docutils literal notranslate"><span class="pre">coordination_by_block()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.coordination_number"><code class="docutils literal notranslate"><span class="pre">coordination_number()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.find_cutoff"><code class="docutils literal notranslate"><span class="pre">find_cutoff()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.hill_formula"><code class="docutils literal notranslate"><span class="pre">hill_formula()</span></code></a></li>
@@ -562,12 +563,12 @@
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.peak_and_minimum"><code class="docutils literal notranslate"><span class="pre">peak_and_minimum()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.residence_time"><code class="docutils literal notranslate"><span class="pre">residence_time()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.second_minimum"><code class="docutils literal notranslate"><span class="pre">second_minimum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.split_blocks"><code class="docutils literal notranslate"><span class="pre">split_blocks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.analysis.split_pair"><code class="docutils literal notranslate"><span class="pre">split_pair()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="liquid_structure_step.html#module-liquid_structure_step.liquid_structure">liquid_structure_step.liquid_structure module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure"><code class="docutils literal notranslate"><span class="pre">LiquidStructure</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.subflowchart"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.subflowchart</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.parameters"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.parameters</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.analyze"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.analyze()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.check_configuration"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.check_configuration()</span></code></a></li>
@@ -577,18 +578,20 @@
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.git_revision"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.git_revision</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.md_requirements"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.md_requirements()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.run"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.run()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.set_id"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.set_id()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.set_subids"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.set_subids()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.LiquidStructure.version"><code class="docutils literal notranslate"><span class="pre">LiquidStructure.version</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.PM"><code class="docutils literal notranslate"><span class="pre">PM</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.RESIDENCE_INTERVAL"><code class="docutils literal notranslate"><span class="pre">RESIDENCE_INTERVAL</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.fmt"><code class="docutils literal notranslate"><span class="pre">fmt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.cells"><code class="docutils literal notranslate"><span class="pre">cells()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.stderr_of"><code class="docutils literal notranslate"><span class="pre">stderr_of()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure.yes"><code class="docutils literal notranslate"><span class="pre">yes()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="liquid_structure_step.html#module-liquid_structure_step.liquid_structure_parameters">liquid_structure_step.liquid_structure_parameters module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure_parameters.LiquidStructureParameters"><code class="docutils literal notranslate"><span class="pre">LiquidStructureParameters</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure_parameters.LiquidStructureParameters.parameters"><code class="docutils literal notranslate"><span class="pre">LiquidStructureParameters.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.liquid_structure_parameters.LiquidStructureParameters.retired"><code class="docutils literal notranslate"><span class="pre">LiquidStructureParameters.retired</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -620,7 +623,6 @@
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.tk_liquid_structure.TkLiquidStructure.self"><code class="docutils literal notranslate"><span class="pre">TkLiquidStructure.self</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.tk_liquid_structure.TkLiquidStructure.create_dialog"><code class="docutils literal notranslate"><span class="pre">TkLiquidStructure.create_dialog()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.tk_liquid_structure.TkLiquidStructure.reset_dialog"><code class="docutils literal notranslate"><span class="pre">TkLiquidStructure.reset_dialog()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.tk_liquid_structure.TkLiquidStructure.reset_structure_frame"><code class="docutils literal notranslate"><span class="pre">TkLiquidStructure.reset_structure_frame()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="liquid_structure_step.html#liquid_structure_step.tk_liquid_structure.TkLiquidStructure.right_click"><code class="docutils literal notranslate"><span class="pre">TkLiquidStructure.right_click()</span></code></a></li>
 </ul>
 </li>

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>History &#8212; SEAMM Liquid Structure Plug-in 2026.10.16 documentation</title>
+    <title>History &#8212; SEAMM Liquid Structure Plug-in 2026.10.17 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=5aae1070"></script>
+    <script src="_static/documentation_options.js?v=fed69469"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.16" />
+  <meta name="docsearch:version" content="2026.10.17" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -511,6 +511,29 @@
   <section id="history">
 <h1>History<a class="headerlink" href="#history" title="Link to this heading">#</a></h1>
 <dl class="simple">
+<dt>2026.10.17 – Analyze MD run before the step; labelled errors for every table</dt><dd><ul class="simple">
+<li><p>The step analyzes MD run before it in the flowchart – the runs of a Loop around
+the MD, as independent replicas (“the last MD run of each loop iteration”, the
+default) – or md.h5md files; it no longer runs its own MD in a sub-flowchart.
+Older flowcharts that stored its settings for that can still be read; the check
+before the job runs says what replaces them.</p></li>
+<li><p>The check before the job runs also warns when the analysis is inside the loop
+holding its MD, when the loop changes the temperature or pressure, and when the
+thermostat does not suit the analysis, with fixes; the step warns before the MD
+when the system is small.</p></li>
+<li><p>Errors are the 95% confidence interval, Student’s t for the number of runs or
+blocks, and the output says so; stored errors are standard errors.</p></li>
+<li><p>The state of the runs – temperature, pressure, volume and density with their
+errors, and the equilibrium density where an NPT run before them gives the bulk
+modulus – is reported and stored. The values of each run or block are in
+step.out.</p></li>
+<li><p>The peaks and minima of g(r), coordination numbers, ion pairing, solvation shells
+and residence times have 95% intervals from the runs (or blocks); residence times
+are computed per run.</p></li>
+<li><p>Bugfix: the description claimed residence times, ion pairing or shells even when
+they were turned off.</p></li>
+</ul>
+</dd>
 <dt>2026.10.16 – First release: the structure of liquids and solutions</dt><dd><ul class="simple">
 <li><p>Radial distribution functions of pairs of sites, with errors, their first peaks
 and minima, and coordination numbers, with fixed cutoffs where the minima

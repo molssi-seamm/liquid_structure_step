@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User Guide &#8212; SEAMM Liquid Structure Plug-in 2026.10.16 documentation</title>
+    <title>User Guide &#8212; SEAMM Liquid Structure Plug-in 2026.10.17 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=5aae1070"></script>
+    <script src="../_static/documentation_options.js?v=fed69469"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.16" />
+  <meta name="docsearch:version" content="2026.10.17" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -526,21 +526,35 @@ solvent, and the residence times of the solvents in the shells.</p></li>
 the g(r) are graphed with their running coordination numbers.</p>
 <section id="where-the-md-comes-from">
 <h2>Where the MD comes from<a class="headerlink" href="#where-the-md-comes-from" title="Link to this heading">#</a></h2>
-<p>Like the Viscosity and Diffusivity steps, the step either runs MD itself or analyzes
-MD that ran earlier:</p>
+<p>The step analyzes MD that ran before it in the flowchart, or the <code class="docutils literal notranslate"><span class="pre">md.h5md</span></code> files of
+earlier runs (“MD to analyze”):</p>
 <ul class="simple">
-<li><p><strong>run the MD in the sub-flowchart</strong>: the step runs the MD in its own flowchart a
-number of times, as independent runs, and averages them;</p></li>
-<li><p><strong>the last MD run</strong> earlier in the flowchart, or <strong>the last MD run of each loop
-iteration</strong>, as independent runs;</p></li>
+<li><p><strong>the last MD run of each loop iteration</strong> (the default): for independent runs, put
+the MD in a Loop – in parallel, with each run starting from the same structure
+(“Discard the structure” in the MD sub-steps) and new velocities – and the step,
+after the loop, analyzes the run of every iteration together. Without a loop it is
+the one MD run before the step;</p></li>
+<li><p><strong>the last MD run</strong> earlier in the flowchart;</p></li>
 <li><p><strong>files</strong>: the <code class="docutils literal notranslate"><span class="pre">md.h5md</span></code> files of earlier runs, including other jobs’
-(<code class="docutils literal notranslate"><span class="pre">job://&lt;n&gt;/&lt;path&gt;</span></code>).</p></li>
+(<code class="docutils literal notranslate"><span class="pre">job://&lt;n&gt;/&lt;path&gt;</span></code>), each an independent run.</p></li>
 </ul>
+<p>A typical flowchart:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model Chemistry (FF@...), Packmol, minimization
+NPT equilibration; Set Cell to its mean volume; NVT equilibration
+Loop over the replicas (parallel)
+    LAMMPS: velocities, NVT decorrelation, NVT production
+Liquid Structure
+</pre></div>
+</div>
 <p>The MD must sample the atoms’ positions (in LAMMPS, “Sample the atomic positions” on
 the trajectory tab), at least every picosecond by default (“Longest interval between
-frames”); the residence times need them about every 0.1 ps. When the step runs its own
-MD it turns the sampling on; for MD earlier in the flowchart, checking the flowchart
-reports what is missing before the job runs.</p>
+frames”); the residence times need them about every 0.1 ps. Checking the flowchart
+before it runs reports what is missing, with a fix that turns the sampling on, and
+also warns when the analysis is inside the loop holding its MD, when the loop changes
+the temperature or pressure (the runs are then not replicas of one state), or when the
+thermostat does not give canonical fluctuations. The structure is a static property,
+so any canonical thermostat will do. Before the MD runs, the step warns if a periodic
+system is small for the analysis (fewer than about 200 molecules).</p>
 </section>
 <section id="species-and-sites">
 <h2>Species and sites<a class="headerlink" href="#species-and-sites" title="Link to this heading">#</a></h2>
@@ -601,13 +615,36 @@ says so when they are further apart.</p>
 <p>A cluster has no density, so there are no g(r): the step reports coordination numbers
 and ion pairing only for the pairs given fixed cutoffs.</p>
 </section>
+<section id="errors">
+<h2>Errors<a class="headerlink" href="#errors" title="Link to this heading">#</a></h2>
+<p>The errors are from the independent runs, or, for a single run, from blocks of it
+(“Blocks for errors from one run”, 5 by default), each analyzed on its own. Every
+“± (95%)” column in the tables is the 95% confidence interval: Student’s t with n − 1
+degrees of freedom (2.78 for 5 runs or blocks) times the standard error, and a line
+under each table says so. The peak positions and heights and the minima have errors
+from the g(r) of each run or block; the coordination numbers, pairing fractions,
+shells and residence times likewise. A value with no error (one run in one block) is
+shown without ±. The band around g(r) in the graphs is the same 95% interval. The
+coordination numbers of each run or block are in the step’s own output, <code class="docutils literal notranslate"><span class="pre">step.out</span></code>.</p>
+</section>
+<section id="the-state">
+<h2>The state<a class="headerlink" href="#the-state" title="Link to this heading">#</a></h2>
+<p>After the structure the step reports the state the runs sampled, in the table shared
+by the analysis steps: temperature, pressure, volume and density with their errors.
+For runs at constant volume the pressure is as measured, and the equilibrium density
+at the target pressure is estimated when an NPT run before them gives the bulk
+modulus. The structure belongs to the state that was run.</p>
+</section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
 <p>The results – the frames and runs analyzed, the coordination numbers, the ion
-pairing and the solvation shells, each a table of values with their errors – can be
-put in variables and tables, and with “Store as properties” the coordination numbers
-and ion pairing are stored with the configuration. The graphs are
-<code class="docutils literal notranslate"><span class="pre">rdf_&lt;pair&gt;.graph</span></code> in the step’s directory.</p>
+pairing and the solvation shells, and the state of the runs – can be put in variables
+and tables. Each value is stored with its standard error (<code class="docutils literal notranslate"><span class="pre">CN,stderr</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fractions,stderr</span></code>, <code class="docutils literal notranslate"><span class="pre">T,stderr</span></code>, …), not the 95% interval, together with what the
+errors are from (“error source”: runs or blocks) and how many there are
+(“n_samples”). With “Store as properties” the coordination numbers and ion pairing
+are stored with the configuration. The graphs are <code class="docutils literal notranslate"><span class="pre">rdf_&lt;pair&gt;.graph</span></code> in the step’s
+directory.</p>
 <p>The step uses <a class="reference external" href="https://www.mdanalysis.org">MDAnalysis</a> to read the trajectory and
 find the distances.</p>
 </section>
@@ -673,6 +710,8 @@ find the distances.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ion-pairing">Ion pairing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solvation-shells">Solvation shells</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systems-without-a-periodic-cell">Systems without a periodic cell</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#errors">Errors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-state">The state</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#results">Results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
