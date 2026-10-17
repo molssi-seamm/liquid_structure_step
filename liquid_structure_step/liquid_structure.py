@@ -553,7 +553,6 @@ class LiquidStructure(seamm.Node):
                 ["Pair", "Peak (Å)", PM, "g(peak)", PM, "Minimum (Å)", PM],
                 peaks,
                 "The first peak and minimum of g(r)",
-                note=self._error_note(),
             )
         if coordination:
             self._print_table(
@@ -563,8 +562,7 @@ class LiquidStructure(seamm.Node):
                 align=["left", "left", "decimal", "decimal"],
                 note=(
                     "CN is the number of the second site within the cutoff of the "
-                    "first, the first minimum of g(r) unless given. "
-                    + self._error_note()
+                    "first, the first minimum of g(r) unless given."
                 ),
             )
         for note in notes:
@@ -700,7 +698,7 @@ class LiquidStructure(seamm.Node):
                     "free: no anion within r2; SSIP: none within r1, one or more "
                     "within r2; CIP: one anion within r1, touching no other cation; "
                     "AGG: an anion within r1 shared with another cation, or more "
-                    "than one. " + self._error_note()
+                    "than one."
                 ),
             )
         for note in notes:
@@ -817,7 +815,7 @@ class LiquidStructure(seamm.Node):
                 headers,
                 rows,
                 f"The solvation shell of {solute}",
-                note=note + " " + self._error_note(),
+                note=note,
             )
 
             # The most common shells
@@ -843,7 +841,6 @@ class LiquidStructure(seamm.Node):
                 ["Shell", "Fraction", PM],
                 rows,
                 f"The most common shells of {solute}",
-                note=self._error_note(),
             )
             results[solute] = entry
 
