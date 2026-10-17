@@ -6,7 +6,8 @@
   element of a species ("O(H2O)"), an element in every species ("O"), or an
   MDAnalysis selection ("select: name O and resname 1").
 - Radial distribution functions accumulated frame by frame, with errors from
-  blocks of frames; the first peak and minimum; coordination numbers.
+  blocks of frames -- the independent runs, or blocks of a single run; the first
+  peak and minimum; coordination numbers.
 - The classification of cation-anion pairs as free, solvent-separated (SSIP),
   contact (CIP) or aggregated (AGG), from distances only, so it also works without
   a periodic cell.
@@ -256,40 +257,80 @@ class RDF:
         """The centres of the bins, Å."""
         return 0.5 * (self.edges[1:] + self.edges[:-1])
 
-    def result(self, n_blocks=5):
+    def result(self, blocks=5):
         """The g(r) and running coordination number, with errors from blocks.
+
+        Parameters
+        ----------
+        blocks : int or [int]
+            The number of equal blocks of frames, or the number of frames in each
+            block (e.g. the frames of each independent run).
 
         Returns
         -------
         dict
             ``r``; ``g`` and ``g_err`` (None without a cell); ``n`` and ``n_err``,
-            the running coordination number (neighbours within r); ``n_frames``
-            and ``n_blocks``.
+            the running coordination number (neighbours within r); the errors
+            are standard errors, None with one block. ``g_blocks`` and
+            ``n_by_block``, the g(r) (None without a cell) and running
+            coordination number of each block; ``n_frames`` and ``n_blocks``.
         """
         if len(self.frames) == 0:
             raise AnalysisError("No frames were analysed.")
         counts = np.array([c for _, c in self.frames])
         n = np.cumsum(counts, axis=1)
         result = {"r": self.r, "r_upper": self.edges[1:], "n_frames": len(self.frames)}
-        result["n"], result["n_err"], used = _mean_and_block_error(n, n_blocks)
+        result["n"], result["n_err"], used, result["n_by_block"] = (
+            _mean_and_block_error(n, blocks)
+        )
         if self.frames[0][0] is not None:
             g = np.array([x for x, _ in self.frames])
-            result["g"], result["g_err"], used = _mean_and_block_error(g, n_blocks)
+            result["g"], result["g_err"], used, result["g_blocks"] = (
+                _mean_and_block_error(g, blocks)
+            )
         else:
-            result["g"] = result["g_err"] = None
+            result["g"] = result["g_err"] = result["g_blocks"] = None
         result["n_blocks"] = used
         return result
 
 
-def _mean_and_block_error(rows, n_blocks):
-    """The mean over frames and its standard error from the means of blocks."""
+def split_blocks(rows, blocks):
+    """Consecutive blocks of the rows (frames).
+
+    Parameters
+    ----------
+    rows : numpy.ndarray or list
+        The frames, along the first axis.
+    blocks : int or [int]
+        The number of (nearly) equal blocks, at most one per frame; or the number
+        of frames in each block, which must add up to the number of frames.
+
+    Returns
+    -------
+    [numpy.ndarray or list]
+        The blocks; empty blocks are dropped.
+    """
+    n = len(rows)
+    if isinstance(blocks, (int, np.integer)):
+        n_blocks = max(1, min(int(blocks), n))
+        edges = np.linspace(0, n, n_blocks + 1).round().astype(int)
+    else:
+        if sum(blocks) != n:
+            raise ValueError(f"The blocks have {sum(blocks)} frames, not {n}.")
+        edges = np.concatenate([[0], np.cumsum(blocks)]).astype(int)
+    return [rows[a:b] for a, b in zip(edges[:-1], edges[1:]) if b > a]
+
+
+def _mean_and_block_error(rows, blocks):
+    """The mean over frames, its standard error from the means of the blocks, the
+    number of blocks, and the mean of each block."""
     mean = rows.mean(axis=0)
-    n_blocks = min(int(n_blocks), rows.shape[0])
+    means = np.array([b.mean(axis=0) for b in split_blocks(rows, blocks)])
+    n_blocks = len(means)
     if n_blocks < 2:
-        return mean, None, 1
-    blocks = np.array([b.mean(axis=0) for b in np.array_split(rows, n_blocks)])
-    err = blocks.std(axis=0, ddof=1) / math.sqrt(n_blocks)
-    return mean, err, n_blocks
+        return mean, None, 1, means
+    err = means.std(axis=0, ddof=1) / math.sqrt(n_blocks)
+    return mean, err, n_blocks, means
 
 
 def _smooth(g, n):
@@ -372,17 +413,30 @@ def second_minimum(r, g, first, width=0.2, sustain=0.2):
     return rest["minimum"]
 
 
+def _cutoff_bin(upper, cutoff):
+    """The last bin wholly within the cutoff, or -1 if there is none."""
+    i = int(np.searchsorted(upper, cutoff + 1.0e-9, side="right")) - 1
+    return min(i, len(upper) - 1)
+
+
 def coordination_number(rdf_result, cutoff):
     """The coordination number within ``cutoff`` and its error, from the running
     coordination number: the neighbours in the bins wholly within the cutoff."""
-    upper = rdf_result["r_upper"]
-    i = int(np.searchsorted(upper, cutoff + 1.0e-9, side="right")) - 1
+    i = _cutoff_bin(rdf_result["r_upper"], cutoff)
     if i < 0:
         return 0.0, 0.0
-    i = min(i, len(upper) - 1)
     n = float(rdf_result["n"][i])
     err = None if rdf_result["n_err"] is None else float(rdf_result["n_err"][i])
     return n, err
+
+
+def coordination_by_block(rdf_result, cutoff):
+    """The coordination number within ``cutoff`` in each block (run)."""
+    i = _cutoff_bin(rdf_result["r_upper"], cutoff)
+    blocks = rdf_result["n_by_block"]
+    if i < 0:
+        return [0.0] * len(blocks)
+    return [float(b[i]) for b in blocks]
 
 
 # ----------------------------------------------------------------------
@@ -458,9 +512,11 @@ class PairingAccumulator:
         n = max(len(classes), 1)
         self.frames.append([np.count_nonzero(classes == c) / n for c in PAIR_CLASSES])
 
-    def result(self, n_blocks=5):
+    def result(self, blocks=5):
+        """The fractions of the cations in each class and their standard errors
+        (None with one block); ``blocks`` as for :meth:`RDF.result`."""
         rows = np.array(self.frames)
-        mean, err, used = _mean_and_block_error(rows, n_blocks)
+        mean, err, used, _ = _mean_and_block_error(rows, blocks)
         return {
             "fractions": dict(zip(PAIR_CLASSES, mean.tolist())),
             "errors": None if err is None else dict(zip(PAIR_CLASSES, err.tolist())),
@@ -516,50 +572,101 @@ class ShellAccumulator:
             self.members[name].append({(int(a), int(b)) for a, b in pairs})
         self.counts.append(counts)
 
-    def result(self, n_blocks=5, dt=None, top=10):
+    def result(self, blocks=5, dt=None, top=10, runs=None):
         """The coordination numbers, shell compositions, pairing and (with ``dt``,
         the interval between frames in ps) residence times.
+
+        Parameters
+        ----------
+        blocks : int or [int]
+            The blocks for the errors, as for :meth:`RDF.result`.
+        dt : float
+            The interval between frames, ps, for the residence times.
+        top : int
+            The number of the most common shells to give.
+        runs : [int]
+            The number of frames of each run, so that the residence times are not
+            taken across runs; by default the frames are one run.
 
         Returns
         -------
         dict
             ``coordination`` and ``coordination_err``: {solvent: number};
-            ``pairing``: {solvent: fraction of solutes with at least one};
-            ``speciation``: [(composition, fraction)], most common first, the
-            composition as {solvent: count}; ``residence``: {solvent: ps} or
-            None.
+            ``pairing`` and ``pairing_err``: {solvent: fraction of solutes with
+            at least one}; ``speciation``: [(composition, fraction, error)], most
+            common first, the composition as {solvent: count};
+            ``residence``: {solvent: ps} or None, the mean over the runs, and
+            ``residence_blocks``: {solvent: [ps or None]}, from each block. The
+            errors are standard errors over the blocks, None with one block.
         """
         counts = np.array(self.counts)  # frames x solutes x solvents
         cn = counts.mean(axis=1)  # frames x solvents
-        mean, err, used = _mean_and_block_error(cn, n_blocks)
+        mean, err, used, _ = _mean_and_block_error(cn, blocks)
         paired = (counts > 0).mean(axis=1)
-        compositions = Counter()
-        for frame in counts:
-            for row in frame:
-                compositions[tuple(int(x) for x in row)] += 1
+        p_mean, p_err, _, _ = _mean_and_block_error(paired, blocks)
+
+        # The shells: the fraction of solutes with each composition, in each block
+        def shells(frames):
+            result = Counter()
+            for frame in frames:
+                for row in frame:
+                    result[tuple(int(x) for x in row)] += 1
+            return result
+
+        compositions = shells(counts)
         total = sum(compositions.values())
-        speciation = [
-            (
-                {n: c for n, c in zip(self.names, comp) if c > 0},
-                count / total,
+        by_block = []
+        for block in split_blocks(counts, blocks):
+            c = shells(block)
+            n = sum(c.values())
+            by_block.append({k: v / n for k, v in c.items()})
+        speciation = []
+        for comp, count in compositions.most_common(top):
+            error = None
+            if len(by_block) > 1:
+                values = [b.get(comp, 0.0) for b in by_block]
+                error = float(np.std(values, ddof=1) / math.sqrt(len(values)))
+            speciation.append(
+                (
+                    {n: c for n, c in zip(self.names, comp) if c > 0},
+                    count / total,
+                    error,
+                )
             )
-            for comp, count in compositions.most_common(top)
-        ]
+
+        def by_name(values):
+            return None if values is None else dict(zip(self.names, values.tolist()))
+
         result = {
-            "coordination": dict(zip(self.names, mean.tolist())),
-            "coordination_err": (
-                None if err is None else dict(zip(self.names, err.tolist()))
-            ),
-            "pairing": dict(zip(self.names, paired.mean(axis=0).tolist())),
+            "coordination": by_name(mean),
+            "coordination_err": by_name(err),
+            "pairing": by_name(p_mean),
+            "pairing_err": by_name(p_err),
             "speciation": speciation,
             "n_frames": counts.shape[0],
             "n_blocks": used,
             "residence": None,
+            "residence_blocks": None,
         }
         if dt is not None:
-            result["residence"] = {
-                name: residence_time(self.members[name], dt) for name in self.names
-            }
+            run_lengths = [counts.shape[0]] if runs is None else runs
+            result["residence"] = {}
+            result["residence_blocks"] = {}
+            for name in self.names:
+                members = self.members[name]
+                per_run = [
+                    residence_time(m, dt) for m in split_blocks(members, run_lengths)
+                ]
+                per_run = [t for t in per_run if t is not None]
+                result["residence"][name] = (
+                    float(np.mean(per_run)) if len(per_run) > 0 else None
+                )
+                if len(by_block) > 1:
+                    result["residence_blocks"][name] = [
+                        residence_time(m, dt) for m in split_blocks(members, blocks)
+                    ]
+                else:
+                    result["residence_blocks"][name] = [result["residence"][name]]
         return result
 
 

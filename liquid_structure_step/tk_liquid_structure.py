@@ -4,10 +4,8 @@
 
 import pprint  # noqa: F401
 import tkinter as tk
-import tkinter.ttk as ttk
 
 from .liquid_structure_parameters import LiquidStructureParameters
-from seamm_md_analysis.step_support import run_own_md
 import seamm
 from seamm_util import ureg, Q_, units_class  # noqa: F401
 import seamm_widgets as sw
@@ -97,139 +95,44 @@ class TkLiquidStructure(seamm.TkNode):
         self.create_dialog()
 
     def create_dialog(self):
-        """
-        Create the dialog. A set of widgets will be chosen by default
-        based on what is specified in the LiquidStructure parameterss
-        module.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
+        """Create the dialog, with the widgets for the parameters.
 
         See Also
         --------
         TkLiquidStructure.reset_dialog
         """
+        frame = super().create_dialog(title="Liquid Structure")
 
-        frame = super().create_dialog(title="Liquid Structure", widget="notebook")
-        # make it large!
-        screen_w = self.dialog.winfo_screenwidth()
-        screen_h = self.dialog.winfo_screenheight()
-        w = int(0.9 * screen_w)
-        h = int(0.8 * screen_h)
-        x = int(0.05 * screen_w / 2)
-        y = int(0.1 * screen_h / 2)
-
-        self.dialog.geometry(f"{w}x{h}+{x}+{y}")
-
-        # Add a frame for the flowchart
-        notebook = self["notebook"]
-        flowchart_frame = ttk.Frame(notebook)
-        self["flowchart frame"] = flowchart_frame
-        notebook.add(flowchart_frame, text="Flowchart", sticky=tk.NSEW)
-
-        self.tk_subflowchart = seamm.TkFlowchart(
-            master=flowchart_frame,
-            flowchart=self.node.subflowchart,
-            namespace=self.namespace,
-        )
-        self.tk_subflowchart.draw()
-
-        # Fill in the control parameters
-        # Shortcut for parameters
         P = self.node.parameters
-
-        # liquid_structure frame to isolate widgets
-        frame = self["structure_frame"] = ttk.LabelFrame(
-            self["frame"],
-            borderwidth=4,
-            relief="sunken",
-            text="Liquid Structure",
-            labelanchor="n",
-            padding=10,
-        )
-
         for key in LiquidStructureParameters.parameters:
             self[key] = P[key].widget(frame)
-
-        # and binding to change as needed
-        for key in LiquidStructureParameters.parameters:
             if hasattr(self[key], "combobox"):
-                self[key].combobox.bind(
-                    "<<ComboboxSelected>>", self.reset_structure_frame
-                )
+                self[key].combobox.bind("<<ComboboxSelected>>", self.reset_dialog)
 
-        # and lay them out
         self.reset_dialog()
 
     def reset_dialog(self, widget=None):
-        """Layout the widgets in the dialog.
-
-        The widgets are chosen by default from the information in
-        LiquidStructure parameters.
-
-        This function simply lays them out row by row with
-        aligned labels. You may wish a more complicated layout that
-        is controlled by values of some of the control parameters.
-        If so, edit or override this method
+        """Lay out the widgets that apply, given the choices made.
 
         Parameters
         ----------
         widget : Tk Widget = None
-
-        Returns
-        -------
-        None
-
-        See Also
-        --------
-        TkLiquidStructure.create_dialog
         """
-
-        row = 0
-
-        self["structure_frame"].grid(row=row, column=0, sticky=tk.EW, pady=10)
-        row += 1
-        self.reset_structure_frame()
-
-        return row
-
-    def reset_structure_frame(self, widget=None):
-        """Layout the widgets in the liquid_structure frame
-        as needed for the current state"""
-
-        source = self["md source"].get()
-        own_md = source == run_own_md
-
-        # The sub-flowchart is used only when this step runs its own MD
-        notebook = self["notebook"]
-        if own_md:
-            notebook.add(self["flowchart frame"])
-        else:
-            notebook.hide(self["flowchart frame"])
-
-        frame = self["structure_frame"]
+        frame = self["frame"]
         for slave in frame.grid_slaves():
             slave.grid_forget()
 
-        # Show the controls that apply, given the others
         P = self.node.parameters
         values = {key: self[key].get() for key in LiquidStructureParameters.parameters}
         row = 0
         widgets = []
         for key in LiquidStructureParameters.parameters:
             if P.applies(key, values):
-                self[key].grid(row=row, column=0, columnspan=2, sticky=tk.W)
+                self[key].grid(row=row, column=0, sticky=tk.W)
                 widgets.append(self[key])
                 row += 1
-
         sw.align_labels(widgets, sticky=tk.E)
-
-        frame.columnconfigure(0, minsize=50)
+        return row
 
     def right_click(self, event):
         """

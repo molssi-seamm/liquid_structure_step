@@ -42,7 +42,9 @@ Features
   (AGG) pairs, also for clusters.
 * Solvation shells: coordination numbers per solvent, the most common shells, pairing,
   and residence times.
-* Runs its own MD or analyzes MD earlier in the flowchart, from SEAMM's H5MD files.
+* Analyzes the MD earlier in the flowchart -- independent runs in a Loop -- or the H5MD
+  files of earlier runs, with 95% confidence intervals from the runs or from blocks of
+  one run, and reports the state of the runs (temperature, pressure, density).
 
 Acknowledgements
 ----------------

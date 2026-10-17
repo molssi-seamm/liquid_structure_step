@@ -21,21 +21,37 @@ the g(r) are graphed with their running coordination numbers.
 Where the MD comes from
 =======================
 
-Like the Viscosity and Diffusivity steps, the step either runs MD itself or analyzes
-MD that ran earlier:
+The step analyzes MD that ran before it in the flowchart, or the ``md.h5md`` files of
+earlier runs ("MD to analyze"):
 
-* **run the MD in the sub-flowchart**: the step runs the MD in its own flowchart a
-  number of times, as independent runs, and averages them;
-* **the last MD run** earlier in the flowchart, or **the last MD run of each loop
-  iteration**, as independent runs;
+* **the last MD run of each loop iteration** (the default): for independent runs, put
+  the MD in a Loop -- in parallel, with each run starting from the same structure
+  ("Discard the structure" in the MD sub-steps) and new velocities -- and the step,
+  after the loop, analyzes the run of every iteration together. Without a loop it is
+  the one MD run before the step;
+* **the last MD run** earlier in the flowchart;
 * **files**: the ``md.h5md`` files of earlier runs, including other jobs'
-  (``job://<n>/<path>``).
+  (``job://<n>/<path>``), each an independent run.
+
+A typical flowchart:
+
+.. code-block:: text
+
+    Model Chemistry (FF@...), Packmol, minimization
+    NPT equilibration; Set Cell to its mean volume; NVT equilibration
+    Loop over the replicas (parallel)
+        LAMMPS: velocities, NVT decorrelation, NVT production
+    Liquid Structure
 
 The MD must sample the atoms' positions (in LAMMPS, "Sample the atomic positions" on
 the trajectory tab), at least every picosecond by default ("Longest interval between
-frames"); the residence times need them about every 0.1 ps. When the step runs its own
-MD it turns the sampling on; for MD earlier in the flowchart, checking the flowchart
-reports what is missing before the job runs.
+frames"); the residence times need them about every 0.1 ps. Checking the flowchart
+before it runs reports what is missing, with a fix that turns the sampling on, and
+also warns when the analysis is inside the loop holding its MD, when the loop changes
+the temperature or pressure (the runs are then not replicas of one state), or when the
+thermostat does not give canonical fluctuations. The structure is a static property,
+so any canonical thermostat will do. Before the MD runs, the step warns if a periodic
+system is small for the analysis (fewer than about 200 molecules).
 
 Species and sites
 =================
@@ -103,14 +119,39 @@ Systems without a periodic cell
 A cluster has no density, so there are no g(r): the step reports coordination numbers
 and ion pairing only for the pairs given fixed cutoffs.
 
+Errors
+======
+
+The errors are from the independent runs, or, for a single run, from blocks of it
+("Blocks for errors from one run", 5 by default), each analyzed on its own. Every
+"± (95%)" column in the tables is the 95% confidence interval: Student's t with n − 1
+degrees of freedom (2.78 for 5 runs or blocks) times the standard error, and a line
+under each table says so. The peak positions and heights and the minima have errors
+from the g(r) of each run or block; the coordination numbers, pairing fractions,
+shells and residence times likewise. A value with no error (one run in one block) is
+shown without ±. The band around g(r) in the graphs is the same 95% interval. The
+coordination numbers of each run or block are in the step's own output, ``step.out``.
+
+The state
+=========
+
+After the structure the step reports the state the runs sampled, in the table shared
+by the analysis steps: temperature, pressure, volume and density with their errors.
+For runs at constant volume the pressure is as measured, and the equilibrium density
+at the target pressure is estimated when an NPT run before them gives the bulk
+modulus. The structure belongs to the state that was run.
+
 Results
 =======
 
 The results -- the frames and runs analyzed, the coordination numbers, the ion
-pairing and the solvation shells, each a table of values with their errors -- can be
-put in variables and tables, and with "Store as properties" the coordination numbers
-and ion pairing are stored with the configuration. The graphs are
-``rdf_<pair>.graph`` in the step's directory.
+pairing and the solvation shells, and the state of the runs -- can be put in variables
+and tables. Each value is stored with its standard error (``CN,stderr``,
+``fractions,stderr``, ``T,stderr``, ...), not the 95% interval, together with what the
+errors are from ("error source": runs or blocks) and how many there are
+("n_samples"). With "Store as properties" the coordination numbers and ion pairing
+are stored with the configuration. The graphs are ``rdf_<pair>.graph`` in the step's
+directory.
 
 The step uses `MDAnalysis <https://www.mdanalysis.org>`_ to read the trajectory and
 find the distances.
