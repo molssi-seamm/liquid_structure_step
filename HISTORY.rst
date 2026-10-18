@@ -1,6 +1,13 @@
 =======
 History
 =======
+2026.10.18 -- Bugfix: frames more often than needed were all analyzed
+    * The step analyzed every frame the MD wrote, so positions written every 0.1 ps were
+      all used even when nothing needed them: a 1000-atom argon run spent half of a
+      12-minute job here. Frames are now skipped down to the interval needed: every 0.1
+      ps when residence times are computed, which needs solutes, else about every
+      'Longest interval between frames'.
+
 2026.10.17 -- Analyze MD run before the step; labelled errors for every table
     * The step analyzes MD run before it in the flowchart -- the runs of a Loop around
       the MD, as independent replicas ("the last MD run of each loop iteration", the

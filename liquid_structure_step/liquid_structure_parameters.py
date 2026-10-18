@@ -31,9 +31,10 @@ class LiquidStructureParameters(seamm.Parameters):
             "format_string": ".2f",
             "description": "Longest interval between frames:",
             "help_text": (
-                "The positions must be sampled at least this often. The structure "
-                "changes slowly, so about a picosecond is enough; the residence "
-                "times need frames ten times as often."
+                "The positions must be sampled at least this often, and frames "
+                "written more often are skipped. The structure changes slowly, so "
+                "about a picosecond is enough; the residence times, when there are "
+                "solutes, need frames ten times as often."
             ),
         },
         "pairs": {
