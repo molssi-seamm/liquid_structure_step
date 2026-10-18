@@ -360,6 +360,15 @@ class LiquidStructure(seamm.Node):
                     == species.count(name)
                 ]
 
+        # The frames to analyze: about every "frame interval", or every 0.1 ps when
+        # residence times will be computed -- only with solutes. Frames written
+        # more often than that are skipped: they add time, not information.
+        wanted = P["frame interval"]
+        wanted = wanted.m_as("ps") if hasattr(wanted, "m_as") else float(wanted)
+        if solutes and yes(P["residence times"]):
+            wanted = min(wanted, RESIDENCE_INTERVAL.m_as("ps"))
+        self._wanted_dt = wanted
+
         # The radial distribution functions needed: those asked for, and for the
         # cutoffs of the ion pairing and shells, cation-anion and solute-solvent
         r_max = P["r max"].m_as("Å")
@@ -597,7 +606,8 @@ class LiquidStructure(seamm.Node):
     def _frames(self, configuration, periodic, first=False):
         """The frames of every run: positions (Å), box and volume (Å^3), the box
         and volume None without a cell. Sets ``self._dt``, the interval between
-        frames in ps, and ``self._run_frames``, the number of frames of each run."""
+        frames in ps, and ``self._run_frames``, the number of frames of each run.
+        Frames closer together than ``self._wanted_dt`` (ps) are skipped."""
         dts = []
         run_frames = []
         for path in self.paths:
@@ -605,16 +615,22 @@ class LiquidStructure(seamm.Node):
                 # The interval between frames from the file's own time axis:
                 # MDAnalysis's H5MD reader does not find it
                 times = md.first["particles/all/position/time"]
+                stride = 1
                 if times.shape[0] > 1:
                     unit = times.attrs.get("unit", "ps")
                     if isinstance(unit, bytes):
                         unit = unit.decode()
-                    dts.append(Q_(float(times[1] - times[0]), unit).m_as("ps"))
+                    dt = Q_(float(times[1] - times[0]), unit).m_as("ps")
+                    wanted = getattr(self, "_wanted_dt", None)
+                    if wanted is not None and dt > 0:
+                        # Every stride-th frame, no further apart than wanted
+                        stride = max(1, int(wanted / dt + 1.0e-6))
+                    dts.append(dt * stride)
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")
                     u = md.universe(configuration)
                 run_frames.append(0)
-                for ts in u.trajectory:
+                for ts in u.trajectory[::stride]:
                     box = ts.dimensions if periodic else None
                     volume = ts.volume if periodic else None
                     run_frames[-1] += 1

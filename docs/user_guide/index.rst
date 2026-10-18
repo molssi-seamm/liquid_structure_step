@@ -45,7 +45,10 @@ A typical flowchart:
 
 The MD must sample the atoms' positions (in LAMMPS, "Sample the atomic positions" on
 the trajectory tab), at least every picosecond by default ("Longest interval between
-frames"); the residence times need them about every 0.1 ps. Checking the flowchart
+frames"); the residence times need them about every 0.1 ps. Frames written more often
+than that are skipped, so the analysis takes no longer than it needs: every 0.1 ps
+when residence times are computed (there are solutes), else every "Longest interval
+between frames". Checking the flowchart
 before it runs reports what is missing, with a fix that turns the sampling on, and
 also warns when the analysis is inside the loop holding its MD, when the loop changes
 the temperature or pressure (the runs are then not replicas of one state), or when the
