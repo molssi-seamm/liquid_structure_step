@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>History &#8212; SEAMM Liquid Structure Plug-in 2026.10.17 documentation</title>
+    <title>History &#8212; SEAMM Liquid Structure Plug-in 2026.10.18 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=fed69469"></script>
+    <script src="_static/documentation_options.js?v=16cc37ab"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.17" />
+  <meta name="docsearch:version" content="2026.10.18" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -511,6 +511,14 @@
   <section id="history">
 <h1>History<a class="headerlink" href="#history" title="Link to this heading">#</a></h1>
 <dl class="simple">
+<dt>2026.10.18 – Bugfix: frames more often than needed were all analyzed</dt><dd><ul class="simple">
+<li><p>The step analyzed every frame the MD wrote, so positions written every 0.1 ps were
+all used even when nothing needed them: a 1000-atom argon run spent half of a
+12-minute job here. Frames are now skipped down to the interval needed: every 0.1
+ps when residence times are computed, which needs solutes, else about every
+‘Longest interval between frames’.</p></li>
+</ul>
+</dd>
 <dt>2026.10.17 – Analyze MD run before the step; labelled errors for every table</dt><dd><ul class="simple">
 <li><p>The step analyzes MD run before it in the flowchart – the runs of a Loop around
 the MD, as independent replicas (“the last MD run of each loop iteration”, the

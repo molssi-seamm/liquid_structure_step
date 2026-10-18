@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.liquid_structure_parameters &#8212; SEAMM Liquid Structure Plug-in 2026.10.17 documentation</title>
+    <title>liquid_structure_step.liquid_structure_parameters &#8212; SEAMM Liquid Structure Plug-in 2026.10.18 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=fed69469"></script>
+    <script src="../../_static/documentation_options.js?v=16cc37ab"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.17" />
+  <meta name="docsearch:version" content="2026.10.18" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -526,9 +526,10 @@
             <span class="s2">"format_string"</span><span class="p">:</span> <span class="s2">".2f"</span><span class="p">,</span>
             <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Longest interval between frames:"</span><span class="p">,</span>
             <span class="s2">"help_text"</span><span class="p">:</span> <span class="p">(</span>
-                <span class="s2">"The positions must be sampled at least this often. The structure "</span>
-                <span class="s2">"changes slowly, so about a picosecond is enough; the residence "</span>
-                <span class="s2">"times need frames ten times as often."</span>
+                <span class="s2">"The positions must be sampled at least this often, and frames "</span>
+                <span class="s2">"written more often are skipped. The structure changes slowly, so "</span>
+                <span class="s2">"about a picosecond is enough; the residence times, when there are "</span>
+                <span class="s2">"solutes, need frames ten times as often."</span>
             <span class="p">),</span>
         <span class="p">},</span>
         <span class="s2">"pairs"</span><span class="p">:</span> <span class="p">{</span>
