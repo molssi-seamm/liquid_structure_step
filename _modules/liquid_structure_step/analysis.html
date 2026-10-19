@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.analysis &#8212; SEAMM Liquid Structure Plug-in 2026.10.18 documentation</title>
+    <title>liquid_structure_step.analysis &#8212; SEAMM Liquid Structure Plug-in 2026.10.19 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=16cc37ab"></script>
+    <script src="../../_static/documentation_options.js?v=b2b4b3b2"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.18" />
+  <meta name="docsearch:version" content="2026.10.19" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -714,7 +714,8 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RDF</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A radial distribution function accumulated over frames.</span>
 
-<span class="sd">    Pairs within the same molecule are left out.</span>
+<span class="sd">    Pairs within the same molecule are left out. Only the sums over the frames of</span>
+<span class="sd">    each block are kept, so the memory does not grow with the number of frames.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -726,9 +727,13 @@
 <span class="sd">        The range, Å.</span>
 <span class="sd">    dr : float</span>
 <span class="sd">        The width of the bins, Å.</span>
+<span class="sd">    block_sizes : [int]</span>
+<span class="sd">        The number of frames in each block for the errors, if known in advance.</span>
+<span class="sd">        Otherwise the frames are kept separately, to be divided into blocks by</span>
+<span class="sd">        :meth:`result`.</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">block_sizes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">same</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">))</span>
@@ -738,7 +743,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_max</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># per frame: normalized g(r) and the counts per a atom</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_sizes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ends</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">block_sizes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">block_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">block_sizes</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_sizes</span><span class="p">)</span>
+        <span class="c1"># The sums over the frames of each block (or each frame): the normalized</span>
+        <span class="c1"># g(r), the counts per a atom, and the number of frames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_g_sums</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count_sums</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="RDF.add_frame">
 <a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.analysis.RDF.add_frame">[docs]</a>
@@ -762,7 +777,11 @@
             <span class="n">pa</span><span class="p">,</span> <span class="n">pb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_max</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">keep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_a</span><span class="p">[</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_b</span><span class="p">[</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
-        <span class="n">hist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="c1"># Uniform bins, the same edges as self.edges: much faster than giving the</span>
+        <span class="c1"># edges, for which numpy sorts the distances</span>
+        <span class="n">hist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+            <span class="n">distances</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="p">)</span>
         <span class="c1"># The neighbours of each a atom in each shell. With the same atoms in both</span>
         <span class="c1"># sites each pair is found twice, as (i, j) and (j, i), which is right:</span>
         <span class="c1"># each is a neighbour of the other.</span>
@@ -774,7 +793,25 @@
             <span class="n">density</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_b</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">same</span> <span class="k">else</span> <span class="n">n_b</span><span class="p">)</span> <span class="o">/</span> <span class="n">volume</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">counts</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">shell</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="n">density</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">g</span><span class="p">,</span> <span class="n">counts</span><span class="p">))</span></div>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ends</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ends</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">"right"</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_sizes</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"There are more frames than the </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ends</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2"> in the "</span>
+                    <span class="s2">"blocks."</span>
+                <span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_g_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_count_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_g_sums</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">g</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count_sums</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">counts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 
     <span class="nd">@property</span>
@@ -791,7 +828,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        blocks : int or [int]</span>
 <span class="sd">            The number of equal blocks of frames, or the number of frames in each</span>
-<span class="sd">            block (e.g. the frames of each independent run).</span>
+<span class="sd">            block (e.g. the frames of each independent run). Ignored if the blocks</span>
+<span class="sd">            were given when the RDF was created.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -802,18 +840,22 @@
 <span class="sd">            ``n_by_block``, the g(r) (None without a cell) and running</span>
 <span class="sd">            coordination number of each block; ``n_frames`` and ``n_blocks``.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AnalysisError</span><span class="p">(</span><span class="s2">"No frames were analysed."</span><span class="p">)</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">])</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="s2">"r_upper"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">"n_frames"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)}</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">"n"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"n_err"</span><span class="p">],</span> <span class="n">used</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">"n_by_block"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">_mean_and_block_error</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">blocks</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">])</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">"g"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"g_err"</span><span class="p">],</span> <span class="n">used</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">"g_blocks"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">_mean_and_block_error</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">blocks</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="s2">"r_upper"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">"n_frames"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span><span class="p">}</span>
+        <span class="c1"># The running coordination number is linear in the counts, so it is the</span>
+        <span class="c1"># running sum of their means</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_count_sums</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="n">_mean_and_block_error</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="n">_mean_and_block_error_of_sums</span>
+            <span class="n">blocks</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"n"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"n_err"</span><span class="p">],</span> <span class="n">used</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">"n_by_block"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">blocks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_sums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"g"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"g_err"</span><span class="p">],</span> <span class="n">used</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">"g_blocks"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_g_sums</span><span class="p">),</span> <span class="n">blocks</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"g_err"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"g_blocks"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -858,6 +900,22 @@
 <span class="sd">    number of blocks, and the mean of each block."""</span>
     <span class="n">mean</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">split_blocks</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">blocks</span><span class="p">)])</span>
+    <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_blocks</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">means</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">means</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">,</span> <span class="n">means</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mean_and_block_error_of_sums</span><span class="p">(</span><span class="n">sums</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""As :func:`_mean_and_block_error`, from the sums over the frames of each</span>
+<span class="sd">    block and the number of frames in each."""</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">used</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">sums</span> <span class="o">=</span> <span class="n">sums</span><span class="p">[</span><span class="n">used</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="n">used</span><span class="p">]</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">sums</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">sums</span> <span class="o">/</span> <span class="n">n</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
     <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n_blocks</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">means</span>
@@ -1110,7 +1168,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">solvents</span> <span class="o">=</span> <span class="n">solvents</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">solvents</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># per frame: (n_solutes, n_solvents)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">members</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>  <span class="c1"># per frame: set of pairs</span>
+        <span class="c1"># Per frame, the pairs in contact as codes solute * n + solvent molecule</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">members</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_molecules</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">molecules</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">molecules</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">solvents</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
 
 <div class="viewcode-block" id="ShellAccumulator.add_frame">
 <a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.analysis.ShellAccumulator.add_frame">[docs]</a>
@@ -1129,7 +1192,9 @@
                 <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">counts</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_solutes</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_molecules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="n">pairs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span></div>
 
 
@@ -1235,38 +1300,80 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_contact_codes</span><span class="p">(</span><span class="n">members</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The pairs in contact in each frame as one array of integer codes and the</span>
+<span class="sd">    frame of each.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    members : [set of (int, int)] or [numpy.ndarray of int]</span>
+<span class="sd">        The pairs in contact in each frame, as sets of pairs or arrays of codes,</span>
+<span class="sd">        each pair at most once per frame.</span>
+<span class="sd">    """</span>
+    <span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">members</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)),</span> <span class="n">sizes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sizes</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="n">frames</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">members</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">members</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="n">frames</span>
+    <span class="c1"># Sets of pairs: number the pairs</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">m</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">codes</span><span class="p">,</span> <span class="n">frames</span>
+
+
 <div class="viewcode-block" id="residence_time">
 <a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.analysis.residence_time">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">residence_time</span><span class="p">(</span><span class="n">members</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">residence_time</span><span class="p">(</span><span class="n">members</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">max_bytes</span><span class="o">=</span><span class="mi">64</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""The residence time of solvent molecules in shells, ps: the time at which the</span>
 <span class="sd">    normalized autocorrelation of the occupancy, &lt;h(0) h(t)&gt; / &lt;h&gt;, first falls</span>
 <span class="sd">    below 1/e (interpolated), or None if it does not within half the run.</span>
 
+<span class="sd">    The autocorrelation is found with FFTs, a batch of pairs at a time so that the</span>
+<span class="sd">    memory is bounded by about ``max_bytes``. Its sums are of products of zeros and</span>
+<span class="sd">    ones, so they are rounded to the integers they are.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    members : [set of (solute, solvent molecule)]</span>
-<span class="sd">        The pairs in contact in each frame.</span>
+<span class="sd">    members : [set of (solute, solvent molecule)] or [numpy.ndarray of int]</span>
+<span class="sd">        The pairs in contact in each frame, as pairs or integer codes.</span>
 <span class="sd">    dt : float</span>
 <span class="sd">        The interval between frames, ps.</span>
+<span class="sd">    max_bytes : int</span>
+<span class="sd">        The memory for a batch of pairs.</span>
 <span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.fft</span><span class="w"> </span><span class="kn">import</span> <span class="n">irfft</span><span class="p">,</span> <span class="n">next_fast_len</span><span class="p">,</span> <span class="n">rfft</span>
+
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">pairs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">members</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">codes</span><span class="p">,</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">_contact_codes</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">codes</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pairs</span><span class="p">)}</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">),</span> <span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">members</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
-            <span class="n">h</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">pairs</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">codes</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"stable"</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+
     <span class="n">max_lag</span> <span class="o">=</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span>
-    <span class="n">occupancy</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">occupancy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">next_fast_len</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># h, its transform and the product: about 4 arrays of length per pair</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_bytes</span> <span class="o">//</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">length</span><span class="p">)))</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_lag</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">),</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="p">[</span><span class="n">start</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="n">batch</span><span class="p">])</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">min</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span><span class="p">),</span> <span class="n">n</span><span class="p">))</span>
+        <span class="n">h</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">lo</span><span class="p">:</span><span class="n">hi</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">frames</span><span class="p">[</span><span class="n">lo</span><span class="p">:</span><span class="n">hi</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">irfft</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">length</span><span class="p">)[:</span><span class="n">max_lag</span><span class="p">]</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">total</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">h</span><span class="p">[:,</span> <span class="p">:</span> <span class="n">n</span> <span class="o">-</span> <span class="n">lag</span><span class="p">]</span> <span class="o">*</span> <span class="n">h</span><span class="p">[:,</span> <span class="n">lag</span><span class="p">:])</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">lag</span><span class="p">)</span> <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_lag</span><span class="p">)]</span>
-    <span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_lag</span><span class="p">))</span>
     <span class="n">c</span> <span class="o">/=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">target</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">e</span>
     <span class="n">below</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">c</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>

@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.18 documentation</title>
+    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.19 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=16cc37ab"></script>
+    <script src="../../_static/documentation_options.js?v=b2b4b3b2"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.18" />
+  <meta name="docsearch:version" content="2026.10.19" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -875,22 +875,46 @@
                     <span class="o">==</span> <span class="n">species</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                 <span class="p">]</span>
 
-        <span class="c1"># The frames to analyze: about every "frame interval", or every 0.1 ps when</span>
+        <span class="c1"># The frames to analyze: about every "frame interval" for the radial</span>
+        <span class="c1"># distribution functions, and every 0.1 ps for the solvation shells when</span>
         <span class="c1"># residence times will be computed -- only with solutes. Frames written</span>
         <span class="c1"># more often than that are skipped: they add time, not information.</span>
         <span class="n">wanted</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"frame interval"</span><span class="p">]</span>
         <span class="n">wanted</span> <span class="o">=</span> <span class="n">wanted</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">wanted</span><span class="p">,</span> <span class="s2">"m_as"</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">wanted</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">solutes</span> <span class="ow">and</span> <span class="n">yes</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]):</span>
-            <span class="n">wanted</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">wanted</span><span class="p">,</span> <span class="n">RESIDENCE_INTERVAL</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wanted_dt</span> <span class="o">=</span> <span class="n">wanted</span>
+        <span class="n">shell_wanted</span> <span class="o">=</span> <span class="n">wanted</span>
+        <span class="k">if</span> <span class="n">solutes</span> <span class="ow">and</span> <span class="n">yes</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]):</span>
+            <span class="n">shell_wanted</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">wanted</span><span class="p">,</span> <span class="n">RESIDENCE_INTERVAL</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">))</span>
+
+        <span class="c1"># The independent samples for the errors: the runs, or blocks of one run.</span>
+        <span class="c1"># The frames are counted first, so that only the sums over each block are</span>
+        <span class="c1"># kept.</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">frame_blocks</span><span class="p">(</span><span class="n">wanted</span><span class="p">):</span>
+            <span class="n">run_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strides</span><span class="p">(</span><span class="n">wanted</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">nruns</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">run_frames</span><span class="p">,</span> <span class="n">run_frames</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">run_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"number of blocks"</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">split_blocks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n_blocks</span><span class="p">)],</span> <span class="n">run_frames</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="s2">"runs"</span> <span class="k">if</span> <span class="n">nruns</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"blocks"</span>
+        <span class="n">blocks</span><span class="p">,</span> <span class="n">run_frames</span> <span class="o">=</span> <span class="n">frame_blocks</span><span class="p">(</span><span class="n">wanted</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+
+        <span class="c1"># The range is at most half the shortest width of the cell</span>
+        <span class="n">r_max</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"r max"</span><span class="p">]</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"Å"</span><span class="p">)</span>
+        <span class="n">dr</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"bin width"</span><span class="p">]</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"Å"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">periodic</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">r_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r_max</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">_shortest_width</span><span class="p">(</span><span class="n">box</span><span class="p">))</span>
 
         <span class="c1"># The radial distribution functions needed: those asked for, and for the</span>
         <span class="c1"># cutoffs of the ion pairing and shells, cation-anion and solute-solvent</span>
-        <span class="n">r_max</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"r max"</span><span class="p">]</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"Å"</span><span class="p">)</span>
-        <span class="n">dr</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="s2">"bin width"</span><span class="p">]</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"Å"</span><span class="p">)</span>
         <span class="n">rdfs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">atoms_a</span><span class="p">,</span> <span class="n">atoms_b</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
-            <span class="n">rdfs</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span> <span class="o">=</span> <span class="n">RDF</span><span class="p">(</span><span class="n">atoms_a</span><span class="p">,</span> <span class="n">atoms_b</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">dr</span><span class="p">)</span>
+            <span class="n">rdfs</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span> <span class="o">=</span> <span class="n">RDF</span><span class="p">(</span>
+                <span class="n">atoms_a</span><span class="p">,</span> <span class="n">atoms_b</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">blocks</span>
+            <span class="p">)</span>
         <span class="n">ion_pairs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]:</span>
             <span class="n">ion_pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cations</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">anions</span><span class="p">]</span>
@@ -905,38 +929,29 @@
                     <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span>
                     <span class="n">r_max</span><span class="p">,</span>
                     <span class="n">dr</span><span class="p">,</span>
+                    <span class="n">blocks</span><span class="p">,</span>
                 <span class="p">)</span>
-
-        <span class="c1"># The range is at most half the shortest width of the cell</span>
-        <span class="k">if</span> <span class="n">periodic</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                <span class="n">r_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r_max</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">_shortest_width</span><span class="p">(</span><span class="n">box</span><span class="p">))</span>
-            <span class="n">rdfs</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">key</span><span class="p">:</span> <span class="n">RDF</span><span class="p">(</span><span class="n">rdf</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">rdf</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">dr</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rdf</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="p">}</span>
 
         <span class="c1"># The first pass over the frames: the radial distribution functions</span>
         <span class="n">n_frames</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">wanted</span><span class="o">=</span><span class="n">wanted</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">rdf</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">rdf</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
             <span class="n">n_frames</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
-        <span class="n">run_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_frames</span>
-
-        <span class="c1"># The independent samples for the errors: the runs, or blocks of one run</span>
-        <span class="k">if</span> <span class="n">nruns</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="s2">"runs"</span>
-            <span class="n">blocks</span> <span class="o">=</span> <span class="n">run_frames</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="s2">"blocks"</span>
-            <span class="n">blocks</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="s2">"number of blocks"</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_blocks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">),</span> <span class="n">blocks</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_frames</span> <span class="o">!=</span> <span class="n">run_frames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Internal error: read </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_frames</span><span class="si">}</span><span class="s2"> frames, expected "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">run_frames</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
 
         <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Analyzed </span><span class="si">{</span><span class="n">n_frames</span><span class="si">}</span><span class="s2"> frames from </span><span class="si">{</span><span class="n">nruns</span><span class="si">}</span><span class="s2"> run</span><span class="si">{</span><span class="s1">'s'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">nruns</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">", every </span><span class="si">{</span><span class="n">dt</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2"> ps"</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ion_pairs</span> <span class="ow">or</span> <span class="n">solutes</span><span class="p">)</span> <span class="ow">and</span> <span class="n">shell_wanted</span> <span class="o">!=</span> <span class="n">wanted</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strides</span><span class="p">(</span><span class="n">shell_wanted</span><span class="p">))</span>
+            <span class="n">what</span> <span class="o">=</span> <span class="s2">"solvation shells"</span> <span class="o">+</span> <span class="p">(</span><span class="s2">" and ion pairing"</span> <span class="k">if</span> <span class="n">ion_pairs</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"; for the </span><span class="si">{</span><span class="n">what</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> frames, every </span><span class="si">{</span><span class="n">shell_wanted</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2"> ps"</span>
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">". "</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_note</span><span class="p">()</span>
         <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">periodic</span><span class="p">:</span>
@@ -952,27 +967,32 @@
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">rdf_results</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">rdf</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rdf</span> <span class="ow">in</span> <span class="n">rdfs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="c1"># The ion pairing and shells read the frames again, with the cutoffs</span>
-        <span class="n">frames</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">)</span>  <span class="c1"># noqa: E731</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">"coordination numbers"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordination</span><span class="p">(</span>
             <span class="n">pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">periodic</span>
         <span class="p">)</span>
+
+        <span class="c1"># The second pass, with the cutoffs from the radial distribution functions:</span>
+        <span class="c1"># the ion pairing and solvation shells together</span>
+        <span class="n">pairing</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">shells</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">ion_pairs</span><span class="p">:</span>
-            <span class="n">results</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ion_pairing</span><span class="p">(</span>
-                <span class="n">ion_pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">blocks</span>
-            <span class="p">)</span>
+            <span class="n">pairing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ion_pairing_setup</span><span class="p">(</span><span class="n">ion_pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">solutes</span><span class="p">:</span>
-            <span class="n">results</span><span class="p">[</span><span class="s2">"solvation shells"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shells</span><span class="p">(</span>
-                <span class="n">P</span><span class="p">,</span>
-                <span class="n">solutes</span><span class="p">,</span>
-                <span class="n">rdf_results</span><span class="p">,</span>
-                <span class="n">cutoffs</span><span class="p">,</span>
-                <span class="n">species</span><span class="p">,</span>
-                <span class="n">frames</span><span class="p">,</span>
-                <span class="n">blocks</span><span class="p">,</span>
-                <span class="n">dt</span><span class="p">,</span>
-                <span class="n">run_frames</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">shells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shells_setup</span><span class="p">(</span><span class="n">solutes</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pairing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">shells</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shell_blocks</span><span class="p">,</span> <span class="n">shell_run_frames</span> <span class="o">=</span> <span class="n">frame_blocks</span><span class="p">(</span><span class="n">shell_wanted</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">wanted</span><span class="o">=</span><span class="n">shell_wanted</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">pairing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_ion_pairing_frame</span><span class="p">(</span><span class="n">pairing</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">shells</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_shells_frame</span><span class="p">(</span><span class="n">shells</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">)</span>
+            <span class="n">shell_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
+            <span class="k">if</span> <span class="n">pairing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">"ion pairing"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ion_pairing_report</span><span class="p">(</span><span class="n">pairing</span><span class="p">,</span> <span class="n">shell_blocks</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">shells</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">"solvation shells"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shells_report</span><span class="p">(</span>
+                    <span class="n">P</span><span class="p">,</span> <span class="n">shells</span><span class="p">,</span> <span class="n">shell_blocks</span><span class="p">,</span> <span class="n">shell_dt</span><span class="p">,</span> <span class="n">shell_run_frames</span>
+                <span class="p">)</span>
 
         <span class="n">state</span> <span class="o">=</span> <span class="n">report_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">printer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span>
 
@@ -1119,11 +1139,39 @@
             <span class="nb">str</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_strides</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wanted</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The stride through the frames of each run for frames about ``wanted``</span>
+<span class="sd">        ps apart, the interval between the frames used (ps, or None for a single</span>
+<span class="sd">        frame), and the number of frames used from each run."""</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">open_md</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
+                <span class="c1"># The interval between frames from the file's own time axis:</span>
+                <span class="c1"># MDAnalysis's H5MD reader does not find it</span>
+                <span class="n">times</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">first</span><span class="p">[</span><span class="s2">"particles/all/position/time"</span><span class="p">]</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">stride</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">unit</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"unit"</span><span class="p">,</span> <span class="s2">"ps"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                    <span class="n">dt</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">wanted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># Every stride-th frame, no further apart than wanted</span>
+                        <span class="n">stride</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">wanted</span> <span class="o">/</span> <span class="n">dt</span> <span class="o">+</span> <span class="mf">1.0e-6</span><span class="p">))</span>
+                    <span class="n">dt</span> <span class="o">*=</span> <span class="n">stride</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">stride</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">stride</span><span class="p">))))</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">periodic</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">wanted</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""The frames of every run: positions (Å), box and volume (Å^3), the box</span>
 <span class="sd">        and volume None without a cell. Sets ``self._dt``, the interval between</span>
 <span class="sd">        frames in ps, and ``self._run_frames``, the number of frames of each run.</span>
-<span class="sd">        Frames closer together than ``self._wanted_dt`` (ps) are skipped."""</span>
+<span class="sd">        Frames closer together than ``wanted`` (ps; by default</span>
+<span class="sd">        ``self._wanted_dt``) are skipped."""</span>
+        <span class="k">if</span> <span class="n">wanted</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wanted</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_wanted_dt"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">dts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">run_frames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">:</span>
@@ -1137,7 +1185,6 @@
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
                         <span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
                     <span class="n">dt</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">m_as</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">)</span>
-                    <span class="n">wanted</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_wanted_dt"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">wanted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="c1"># Every stride-th frame, no further apart than wanted</span>
                         <span class="n">stride</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">wanted</span> <span class="o">/</span> <span class="n">dt</span> <span class="o">+</span> <span class="mf">1.0e-6</span><span class="p">))</span>
@@ -1158,11 +1205,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dts</span><span class="p">))</span> <span class="k">if</span> <span class="n">dts</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_frames</span> <span class="o">=</span> <span class="n">run_frames</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_ion_pairing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ion_pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">blocks</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Classify the cations of each cation-anion pair in every frame."""</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ion_pairing_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ion_pairs</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The cutoffs and accumulators for classifying the cations of each</span>
+<span class="sd">        cation-anion pair in every frame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            "jobs": the pairs to classify, each a dict with its label, cutoffs,</span>
+<span class="sd">            atoms and accumulator; "results" and "notes" for the pairs that cannot</span>
+<span class="sd">            be classified.</span>
+<span class="sd">        """</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">cation</span><span class="p">,</span> <span class="n">anion</span> <span class="ow">in</span> <span class="n">ion_pairs</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cation</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">anion</span><span class="si">}</span><span class="s2">"</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">rdf_results</span><span class="p">[(</span><span class="n">cation</span><span class="p">,</span> <span class="n">anion</span><span class="p">)]</span>
@@ -1197,14 +1253,42 @@
             <span class="n">an_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">[</span><span class="n">an_atoms</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span>
                 <span class="mi">1</span>
             <span class="p">]</span>
-            <span class="n">acc</span> <span class="o">=</span> <span class="n">PairingAccumulator</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">():</span>
-                <span class="n">acc</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span>
-                    <span class="n">classify_ion_pairs</span><span class="p">(</span>
-                        <span class="n">x</span><span class="p">[</span><span class="n">cat_atoms</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">an_atoms</span><span class="p">],</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">anion_ids</span><span class="o">=</span><span class="n">an_ids</span>
-                    <span class="p">)</span>
+            <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"label"</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                    <span class="s2">"r1"</span><span class="p">:</span> <span class="n">r1</span><span class="p">,</span>
+                    <span class="s2">"r2"</span><span class="p">:</span> <span class="n">r2</span><span class="p">,</span>
+                    <span class="s2">"cations"</span><span class="p">:</span> <span class="n">cat_atoms</span><span class="p">,</span>
+                    <span class="s2">"anions"</span><span class="p">:</span> <span class="n">an_atoms</span><span class="p">,</span>
+                    <span class="s2">"anion_ids"</span><span class="p">:</span> <span class="n">an_ids</span><span class="p">,</span>
+                    <span class="s2">"acc"</span><span class="p">:</span> <span class="n">PairingAccumulator</span><span class="p">(),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"jobs"</span><span class="p">:</span> <span class="n">jobs</span><span class="p">,</span> <span class="s2">"results"</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span> <span class="s2">"notes"</span><span class="p">:</span> <span class="n">notes</span><span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ion_pairing_frame</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Classify the cations of one frame."""</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]:</span>
+            <span class="n">job</span><span class="p">[</span><span class="s2">"acc"</span><span class="p">]</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span>
+                <span class="n">classify_ion_pairs</span><span class="p">(</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">job</span><span class="p">[</span><span class="s2">"cations"</span><span class="p">]],</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">job</span><span class="p">[</span><span class="s2">"anions"</span><span class="p">]],</span>
+                    <span class="n">job</span><span class="p">[</span><span class="s2">"r1"</span><span class="p">],</span>
+                    <span class="n">job</span><span class="p">[</span><span class="s2">"r2"</span><span class="p">],</span>
+                    <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span>
+                    <span class="n">anion_ids</span><span class="o">=</span><span class="n">job</span><span class="p">[</span><span class="s2">"anion_ids"</span><span class="p">],</span>
                 <span class="p">)</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">acc</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ion_pairing_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup</span><span class="p">,</span> <span class="n">blocks</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Print and return the fractions of the cations in each class."""</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"results"</span><span class="p">]</span>
+        <span class="n">notes</span> <span class="o">=</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"notes"</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]:</span>
+            <span class="n">label</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">"label"</span><span class="p">],</span> <span class="n">job</span><span class="p">[</span><span class="s2">"r1"</span><span class="p">],</span> <span class="n">job</span><span class="p">[</span><span class="s2">"r2"</span><span class="p">]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">"acc"</span><span class="p">]</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
             <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"r1"</span><span class="p">:</span> <span class="n">r1</span><span class="p">,</span> <span class="s2">"r2"</span><span class="p">:</span> <span class="n">r2</span><span class="p">,</span> <span class="s2">"fractions"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"fractions"</span><span class="p">]}</span>
             <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"errors"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">entry</span><span class="p">[</span><span class="s2">"fractions,stderr"</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">"errors"</span><span class="p">]</span>
@@ -1239,20 +1323,18 @@
             <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_shells</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">P</span><span class="p">,</span>
-        <span class="n">solutes</span><span class="p">,</span>
-        <span class="n">rdf_results</span><span class="p">,</span>
-        <span class="n">cutoffs</span><span class="p">,</span>
-        <span class="n">species</span><span class="p">,</span>
-        <span class="n">frames</span><span class="p">,</span>
-        <span class="n">blocks</span><span class="p">,</span>
-        <span class="n">dt</span><span class="p">,</span>
-        <span class="n">run_frames</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""The solvation shells of each solute."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shells_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solutes</span><span class="p">,</span> <span class="n">rdf_results</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">species</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The cutoffs and accumulators for the solvation shells of each solute.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            "jobs": for each solute with a shell, its name, solvents, the species</span>
+<span class="sd">            without a cutoff, and its accumulator; "results" for the others.</span>
+<span class="sd">        """</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">solute</span> <span class="ow">in</span> <span class="n">solutes</span><span class="p">:</span>
             <span class="n">solute_atoms</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">heavy_atoms</span><span class="p">(</span><span class="n">solute</span><span class="p">)</span>
             <span class="n">solute_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
@@ -1275,19 +1357,38 @@
                 <span class="n">solvents</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">molecule_of_atom</span><span class="p">[</span><span class="n">atoms</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">solvents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">results</span><span class="p">[</span><span class="n">solute</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"error"</span><span class="p">:</span> <span class="s2">"no cutoffs for any solvent"</span><span class="p">}</span>
-                <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                    <span class="n">__</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">"There is no cutoff for any species around </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">, so it "</span>
-                        <span class="s2">"has no solvation shell. Give fixed cutoffs for it.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
-                        <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"There is no cutoff for any species around </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">, so it has "</span>
+                    <span class="s2">"no solvation shell. Give fixed cutoffs for it.</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
-            <span class="n">acc</span> <span class="o">=</span> <span class="n">ShellAccumulator</span><span class="p">(</span><span class="n">solute_atoms</span><span class="p">,</span> <span class="n">solute_ids</span><span class="p">,</span> <span class="n">solvents</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">():</span>
-                <span class="n">acc</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+            <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"solute"</span><span class="p">:</span> <span class="n">solute</span><span class="p">,</span>
+                    <span class="s2">"solvents"</span><span class="p">:</span> <span class="n">solvents</span><span class="p">,</span>
+                    <span class="s2">"skipped"</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
+                    <span class="s2">"acc"</span><span class="p">:</span> <span class="n">ShellAccumulator</span><span class="p">(</span><span class="n">solute_atoms</span><span class="p">,</span> <span class="n">solute_ids</span><span class="p">,</span> <span class="n">solvents</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"jobs"</span><span class="p">:</span> <span class="n">jobs</span><span class="p">,</span> <span class="s2">"results"</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span> <span class="s2">"messages"</span><span class="p">:</span> <span class="n">messages</span><span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shells_frame</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Find the shells in one frame."""</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]:</span>
+            <span class="n">job</span><span class="p">[</span><span class="s2">"acc"</span><span class="p">]</span><span class="o">.</span><span class="n">add_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shells_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">setup</span><span class="p">,</span> <span class="n">blocks</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">run_frames</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Print and return the solvation shells of each solute."""</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"results"</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">]:</span>
+            <span class="n">printer</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="s2">" "</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">setup</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]:</span>
+            <span class="n">solute</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">"solute"</span><span class="p">]</span>
+            <span class="n">solvents</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">"solvents"</span><span class="p">]</span>
+            <span class="n">skipped</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">"skipped"</span><span class="p">]</span>
             <span class="n">residence_dt</span> <span class="o">=</span> <span class="n">dt</span> <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="s2">"residence times"</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">acc</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">residence_dt</span><span class="p">,</span> <span class="n">runs</span><span class="o">=</span><span class="n">run_frames</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s2">"acc"</span><span class="p">]</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">residence_dt</span><span class="p">,</span> <span class="n">runs</span><span class="o">=</span><span class="n">run_frames</span><span class="p">)</span>
 
             <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">"cutoffs"</span><span class="p">:</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">solvents</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
