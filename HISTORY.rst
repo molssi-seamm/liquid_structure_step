@@ -1,6 +1,10 @@
 =======
 History
 =======
+2026.10.19.1 -- Scaled ion charges
+    * The cations and anions of MD with scaled charges (LAMMPS's 'Scale the charges of
+      ions by') are found from their formal charges, for any factor.
+
 2026.10.19 -- Bugfix: long runs were very slow and used too much memory
     * Every frame's g(r) was kept, about 10 kB per pair of sites per frame, so long runs
       ran out of memory: four 3 ns runs of 1 m NaCl(aq) with positions every 0.1 ps
