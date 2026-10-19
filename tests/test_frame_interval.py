@@ -62,3 +62,22 @@ def test_frames_every_tenth_kept_for_residence_times(monkeypatch):
 def test_an_uneven_ratio_stays_within_the_interval(monkeypatch):
     kept, dt, _ = _analyzed(monkeypatch, wanted=0.25)
     assert kept[:3] == [0, 2, 4] and abs(dt - 0.2) < 1e-12
+
+
+def test_strides_count_the_frames(monkeypatch):
+    """The frames are counted before they are read, for the blocks."""
+    for wanted, n in ((1.0, 100), (0.1, 100), (0.25, 99), (0.3, 7), (None, 5)):
+        monkeypatch.setattr(module, "open_md", _fake_md(n))
+        step = SimpleNamespace(paths=["run1", "run2"], _wanted_dt=wanted)
+        frames = list(module.LiquidStructure._frames(step, None, periodic=False))
+        strides = module.LiquidStructure._strides(step, wanted)
+        assert [count for _, _, count in strides] == step._run_frames
+        assert sum(step._run_frames) == len(frames)
+
+
+def test_frames_at_a_given_interval(monkeypatch):
+    """The interval can be given, overriding the step's."""
+    monkeypatch.setattr(module, "open_md", _fake_md(100))
+    step = SimpleNamespace(paths=["run1"], _wanted_dt=1.0)
+    frames = list(module.LiquidStructure._frames(step, None, False, wanted=0.1))
+    assert len(frames) == 100 and abs(step._dt - 0.1) < 1e-12

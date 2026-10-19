@@ -46,9 +46,13 @@ A typical flowchart:
 The MD must sample the atoms' positions (in LAMMPS, "Sample the atomic positions" on
 the trajectory tab), at least every picosecond by default ("Longest interval between
 frames"); the residence times need them about every 0.1 ps. Frames written more often
-than that are skipped, so the analysis takes no longer than it needs: every 0.1 ps
-when residence times are computed (there are solutes), else every "Longest interval
-between frames". Checking the flowchart
+than that are skipped, so the analysis takes no longer than it needs: the radial
+distribution functions and coordination numbers use frames about every "Longest
+interval between frames", and the ion pairing and solvation shells every 0.1 ps when
+residence times are computed (there are solutes), else the same frames. Only sums over
+the frames of each run or block are kept, so long runs with many frames need little
+memory: four 3 ns runs of 1685 atoms, 120,000 frames at 0.1 ps, take about 17
+minutes in 1 GB. Checking the flowchart
 before it runs reports what is missing, with a fix that turns the sampling on, and
 also warns when the analysis is inside the loop holding its MD, when the loop changes
 the temperature or pressure (the runs are then not replicas of one state), or when the
@@ -114,7 +118,8 @@ most common shells with their fractions.
 
 The **residence time** of a solvent is the time at which the autocorrelation of the
 occupancy of the shells falls to 1/e. It needs frames about every 0.1 ps; the step
-says so when they are further apart.
+says so when they are further apart. The autocorrelation is computed with FFTs, so long
+runs take seconds.
 
 Systems without a periodic cell
 ===============================
