@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.19 documentation</title>
+    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.19.1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=b2b4b3b2"></script>
+    <script src="../../_static/documentation_options.js?v=a5793183"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.19" />
+  <meta name="docsearch:version" content="2026.10.19.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -833,6 +833,10 @@
         <span class="k">with</span> <span class="n">open_md</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">md</span><span class="p">:</span>
             <span class="n">periodic</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">periodic</span>
             <span class="n">charges</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">charges</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+            <span class="c1"># The charges of ions may have been scaled, e.g. by 0.8; the ions are</span>
+            <span class="c1"># found from their formal charges</span>
+            <span class="k">if</span> <span class="n">charges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">charges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">charges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">md</span><span class="o">.</span><span class="n">ion_charge_scale</span>
             <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
                 <span class="n">universe</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">universe</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
