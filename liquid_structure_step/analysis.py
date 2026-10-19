@@ -192,7 +192,8 @@ ANIONS = {"F", "Cl", "Br", "I"}
 class RDF:
     """A radial distribution function accumulated over frames.
 
-    Pairs within the same molecule are left out.
+    Pairs within the same molecule are left out. Only the sums over the frames of
+    each block are kept, so the memory does not grow with the number of frames.
 
     Parameters
     ----------
@@ -204,9 +205,13 @@ class RDF:
         The range, Å.
     dr : float
         The width of the bins, Å.
+    block_sizes : [int]
+        The number of frames in each block for the errors, if known in advance.
+        Otherwise the frames are kept separately, to be divided into blocks by
+        :meth:`result`.
     """
 
-    def __init__(self, a, b, molecule_of_atom, r_max=12.0, dr=0.02):
+    def __init__(self, a, b, molecule_of_atom, r_max=12.0, dr=0.02, block_sizes=None):
         self.a = np.asarray(a)
         self.b = np.asarray(b)
         self.same = np.array_equal(np.sort(self.a), np.sort(self.b))
@@ -216,7 +221,17 @@ class RDF:
         self.dr = float(dr)
         self.n_bins = int(round(self.r_max / self.dr))
         self.edges = np.linspace(0.0, self.n_bins * self.dr, self.n_bins + 1)
-        self.frames = []  # per frame: normalized g(r) and the counts per a atom
+        self.block_sizes = None
+        self._ends = None
+        if block_sizes is not None:
+            self.block_sizes = [int(n) for n in block_sizes]
+            self._ends = np.cumsum(self.block_sizes)
+        # The sums over the frames of each block (or each frame): the normalized
+        # g(r), the counts per a atom, and the number of frames
+        self._g_sums = []
+        self._count_sums = []
+        self._n = []
+        self.n_frames = 0
 
     def add_frame(self, positions, box=None, volume=None):
         """Add a frame.
@@ -238,7 +253,11 @@ class RDF:
             pa, pb, self.r_max, box=box, return_distances=True
         )
         keep = self.mol_a[pairs[:, 0]] != self.mol_b[pairs[:, 1]]
-        hist, _ = np.histogram(distances[keep], bins=self.edges)
+        # Uniform bins, the same edges as self.edges: much faster than giving the
+        # edges, for which numpy sorts the distances
+        hist, _ = np.histogram(
+            distances[keep], bins=self.n_bins, range=(0.0, self.edges[-1])
+        )
         # The neighbours of each a atom in each shell. With the same atoms in both
         # sites each pair is found twice, as (i, j) and (j, i), which is right:
         # each is a neighbour of the other.
@@ -250,7 +269,25 @@ class RDF:
             density = (n_b - 1 if self.same else n_b) / volume
             g = counts / (density * shell)
             self.density = density
-        self.frames.append((g, counts))
+
+        if self._ends is None:
+            k = self.n_frames
+        else:
+            k = int(np.searchsorted(self._ends, self.n_frames, side="right"))
+            if k >= len(self.block_sizes):
+                raise ValueError(
+                    f"There are more frames than the {int(self._ends[-1])} in the "
+                    "blocks."
+                )
+        while len(self._n) <= k:
+            self._g_sums.append(None if g is None else np.zeros(self.n_bins))
+            self._count_sums.append(np.zeros(self.n_bins))
+            self._n.append(0)
+        if g is not None:
+            self._g_sums[k] += g
+        self._count_sums[k] += counts
+        self._n[k] += 1
+        self.n_frames += 1
 
     @property
     def r(self):
@@ -264,7 +301,8 @@ class RDF:
         ----------
         blocks : int or [int]
             The number of equal blocks of frames, or the number of frames in each
-            block (e.g. the frames of each independent run).
+            block (e.g. the frames of each independent run). Ignored if the blocks
+            were given when the RDF was created.
 
         Returns
         -------
@@ -275,18 +313,22 @@ class RDF:
             ``n_by_block``, the g(r) (None without a cell) and running
             coordination number of each block; ``n_frames`` and ``n_blocks``.
         """
-        if len(self.frames) == 0:
+        if self.n_frames == 0:
             raise AnalysisError("No frames were analysed.")
-        counts = np.array([c for _, c in self.frames])
-        n = np.cumsum(counts, axis=1)
-        result = {"r": self.r, "r_upper": self.edges[1:], "n_frames": len(self.frames)}
-        result["n"], result["n_err"], used, result["n_by_block"] = (
-            _mean_and_block_error(n, blocks)
-        )
-        if self.frames[0][0] is not None:
-            g = np.array([x for x, _ in self.frames])
-            result["g"], result["g_err"], used, result["g_blocks"] = (
-                _mean_and_block_error(g, blocks)
+        result = {"r": self.r, "r_upper": self.edges[1:], "n_frames": self.n_frames}
+        # The running coordination number is linear in the counts, so it is the
+        # running sum of their means
+        counts = np.cumsum(np.array(self._count_sums), axis=1)
+        n = np.array(self._n)
+        if self.block_sizes is None:
+            stats = _mean_and_block_error
+        else:
+            stats = _mean_and_block_error_of_sums
+            blocks = n
+        result["n"], result["n_err"], used, result["n_by_block"] = stats(counts, blocks)
+        if self._g_sums[0] is not None:
+            result["g"], result["g_err"], used, result["g_blocks"] = stats(
+                np.array(self._g_sums), blocks
             )
         else:
             result["g"] = result["g_err"] = result["g_blocks"] = None
@@ -326,6 +368,22 @@ def _mean_and_block_error(rows, blocks):
     number of blocks, and the mean of each block."""
     mean = rows.mean(axis=0)
     means = np.array([b.mean(axis=0) for b in split_blocks(rows, blocks)])
+    n_blocks = len(means)
+    if n_blocks < 2:
+        return mean, None, 1, means
+    err = means.std(axis=0, ddof=1) / math.sqrt(n_blocks)
+    return mean, err, n_blocks, means
+
+
+def _mean_and_block_error_of_sums(sums, n):
+    """As :func:`_mean_and_block_error`, from the sums over the frames of each
+    block and the number of frames in each."""
+    n = np.asarray(n)
+    used = n > 0
+    sums = sums[used]
+    n = n[used]
+    mean = sums.sum(axis=0) / n.sum()
+    means = sums / n[:, np.newaxis]
     n_blocks = len(means)
     if n_blocks < 2:
         return mean, None, 1, means
@@ -552,7 +610,12 @@ class ShellAccumulator:
         self.solvents = solvents
         self.names = list(solvents)
         self.counts = []  # per frame: (n_solutes, n_solvents)
-        self.members = {name: [] for name in self.names}  # per frame: set of pairs
+        # Per frame, the pairs in contact as codes solute * n + solvent molecule
+        self.members = {name: [] for name in self.names}
+        self._n_molecules = {
+            name: int(np.max(molecules)) + 1 if len(molecules) > 0 else 1
+            for name, (_, molecules, _) in solvents.items()
+        }
 
     def add_frame(self, positions, box=None):
         from MDAnalysis.lib.distances import capped_distance
@@ -569,7 +632,9 @@ class ShellAccumulator:
                 axis=0,
             ).reshape(-1, 2)
             counts[:, k] = np.bincount(pairs[:, 0], minlength=self.n_solutes)
-            self.members[name].append({(int(a), int(b)) for a, b in pairs})
+            self.members[name].append(
+                pairs[:, 0] * self._n_molecules[name] + pairs[:, 1]
+            )
         self.counts.append(counts)
 
     def result(self, blocks=5, dt=None, top=10, runs=None):
@@ -670,36 +735,78 @@ class ShellAccumulator:
         return result
 
 
-def residence_time(members, dt):
+def _contact_codes(members):
+    """The pairs in contact in each frame as one array of integer codes and the
+    frame of each.
+
+    Parameters
+    ----------
+    members : [set of (int, int)] or [numpy.ndarray of int]
+        The pairs in contact in each frame, as sets of pairs or arrays of codes,
+        each pair at most once per frame.
+    """
+    sizes = np.array([len(m) for m in members], dtype=np.int64)
+    frames = np.repeat(np.arange(len(members)), sizes)
+    if sizes.sum() == 0:
+        return np.zeros(0, dtype=np.int64), frames
+    if all(isinstance(m, np.ndarray) for m in members):
+        return np.concatenate(members).astype(np.int64), frames
+    # Sets of pairs: number the pairs
+    index = {}
+    codes = np.array(
+        [index.setdefault(p, len(index)) for m in members for p in m], dtype=np.int64
+    )
+    return codes, frames
+
+
+def residence_time(members, dt, max_bytes=64 * 2**20):
     """The residence time of solvent molecules in shells, ps: the time at which the
     normalized autocorrelation of the occupancy, <h(0) h(t)> / <h>, first falls
     below 1/e (interpolated), or None if it does not within half the run.
 
+    The autocorrelation is found with FFTs, a batch of pairs at a time so that the
+    memory is bounded by about ``max_bytes``. Its sums are of products of zeros and
+    ones, so they are rounded to the integers they are.
+
     Parameters
     ----------
-    members : [set of (solute, solvent molecule)]
-        The pairs in contact in each frame.
+    members : [set of (solute, solvent molecule)] or [numpy.ndarray of int]
+        The pairs in contact in each frame, as pairs or integer codes.
     dt : float
         The interval between frames, ps.
+    max_bytes : int
+        The memory for a batch of pairs.
     """
+    from scipy.fft import irfft, next_fast_len, rfft
+
     n = len(members)
     if n < 4:
         return None
-    pairs = sorted(set().union(*members))
-    if len(pairs) == 0:
+    codes, frames = _contact_codes(members)
+    if codes.size == 0:
         return None
-    index = {p: i for i, p in enumerate(pairs)}
-    h = np.zeros((len(pairs), n), dtype=float)
-    for t, frame in enumerate(members):
-        for p in frame:
-            h[index[p], t] = 1.0
+    pairs, rows = np.unique(codes, return_inverse=True)
+    rows = rows.reshape(-1)
+    order = np.argsort(rows, kind="stable")
+    rows = rows[order]
+    frames = frames[order]
+
     max_lag = n // 2
-    occupancy = h.sum()
-    if occupancy == 0:
+    length = next_fast_len(2 * n - 1, real=True)
+    # h, its transform and the product: about 4 arrays of length per pair
+    batch = max(1, int(max_bytes // (4 * 8 * length)))
+    total = np.zeros(max_lag)
+    for start in range(0, len(pairs), batch):
+        lo, hi = np.searchsorted(rows, [start, start + batch])
+        h = np.zeros((min(batch, len(pairs) - start), n))
+        h[rows[lo:hi] - start, frames[lo:hi]] = 1.0
+        F = rfft(h, length, axis=1)
+        power = np.sum(F.real**2 + F.imag**2, axis=0)
+        total += irfft(power, length)[:max_lag]
+    total = np.rint(total)
+    if total[0] == 0:
         return None
-    c = np.array(
-        [np.sum(h[:, : n - lag] * h[:, lag:]) / (n - lag) for lag in range(max_lag)]
-    )
+    c = total / (n - np.arange(max_lag))
     c /= c[0]
     target = 1.0 / math.e
     below = np.where(c < target)[0]

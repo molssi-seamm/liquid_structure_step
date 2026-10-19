@@ -1,6 +1,20 @@
 =======
 History
 =======
+2026.10.19 -- Bugfix: long runs were very slow and used too much memory
+    * Every frame's g(r) was kept, about 10 kB per pair of sites per frame, so long runs
+      ran out of memory: four 3 ns runs of 1 m NaCl(aq) with positions every 0.1 ps
+      (120,000 frames) took 10.6 hours, mostly swapping. Only the sums over each run or
+      block are kept now, with the same results. The same analysis now takes 17
+      minutes in 1 GB (an hour with the radial distribution functions from every 0.1
+      ps frame, as before, which reproduces the earlier results exactly).
+    * The residence times took a time growing as the cube of the length of the runs;
+      they are now found with FFTs, with the same results, in seconds.
+    * The radial distribution functions use frames about every 'Longest interval
+      between frames' even when residence times are computed; only the ion pairing and
+      solvation shells use the frames every 0.1 ps. The ion pairing and all the shells
+      are found in one pass over the frames, and each frame is binned faster.
+
 2026.10.18 -- Bugfix: frames more often than needed were all analyzed
     * The step analyzed every frame the MD wrote, so positions written every 0.1 ps were
       all used even when nothing needed them: a 1000-atom argon run spent half of a

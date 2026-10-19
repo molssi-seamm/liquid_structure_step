@@ -33,8 +33,9 @@ class LiquidStructureParameters(seamm.Parameters):
             "help_text": (
                 "The positions must be sampled at least this often, and frames "
                 "written more often are skipped. The structure changes slowly, so "
-                "about a picosecond is enough; the residence times, when there are "
-                "solutes, need frames ten times as often."
+                "about a picosecond is enough for the radial distribution "
+                "functions; the solvation shells, when there are solutes and their "
+                "residence times are wanted, use frames ten times as often."
             ),
         },
         "pairs": {

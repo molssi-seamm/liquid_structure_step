@@ -360,22 +360,46 @@ class LiquidStructure(seamm.Node):
                     == species.count(name)
                 ]
 
-        # The frames to analyze: about every "frame interval", or every 0.1 ps when
+        # The frames to analyze: about every "frame interval" for the radial
+        # distribution functions, and every 0.1 ps for the solvation shells when
         # residence times will be computed -- only with solutes. Frames written
         # more often than that are skipped: they add time, not information.
         wanted = P["frame interval"]
         wanted = wanted.m_as("ps") if hasattr(wanted, "m_as") else float(wanted)
-        if solutes and yes(P["residence times"]):
-            wanted = min(wanted, RESIDENCE_INTERVAL.m_as("ps"))
         self._wanted_dt = wanted
+        shell_wanted = wanted
+        if solutes and yes(P["residence times"]):
+            shell_wanted = min(wanted, RESIDENCE_INTERVAL.m_as("ps"))
+
+        # The independent samples for the errors: the runs, or blocks of one run.
+        # The frames are counted first, so that only the sums over each block are
+        # kept.
+        def frame_blocks(wanted):
+            run_frames = [n for _, _, n in self._strides(wanted)]
+            if nruns > 1:
+                return run_frames, run_frames
+            n = run_frames[0]
+            n_blocks = max(1, int(P["number of blocks"]))
+            return [len(b) for b in split_blocks(range(n), n_blocks)], run_frames
+
+        self._source = "runs" if nruns > 1 else "blocks"
+        blocks, run_frames = frame_blocks(wanted)
+        self._n_samples = len(blocks)
+
+        # The range is at most half the shortest width of the cell
+        r_max = P["r max"].m_as("Å")
+        dr = P["bin width"].m_as("Å")
+        if periodic:
+            for x, box, volume in self._frames(configuration, periodic, first=True):
+                r_max = min(r_max, 0.5 * _shortest_width(box))
 
         # The radial distribution functions needed: those asked for, and for the
         # cutoffs of the ion pairing and shells, cation-anion and solute-solvent
-        r_max = P["r max"].m_as("Å")
-        dr = P["bin width"].m_as("Å")
         rdfs = {}
         for a, b, atoms_a, atoms_b in pairs:
-            rdfs[(a, b)] = RDF(atoms_a, atoms_b, species.molecule_of_atom, r_max, dr)
+            rdfs[(a, b)] = RDF(
+                atoms_a, atoms_b, species.molecule_of_atom, r_max, dr, blocks
+            )
         ion_pairs = []
         if P["ion pairing"]:
             ion_pairs = [(c, a) for c in cations for a in anions]
@@ -390,38 +414,29 @@ class LiquidStructure(seamm.Node):
                     species.molecule_of_atom,
                     r_max,
                     dr,
+                    blocks,
                 )
-
-        # The range is at most half the shortest width of the cell
-        if periodic:
-            for x, box, volume in self._frames(configuration, periodic, first=True):
-                r_max = min(r_max, 0.5 * _shortest_width(box))
-            rdfs = {
-                key: RDF(rdf.a, rdf.b, species.molecule_of_atom, r_max, dr)
-                for key, rdf in rdfs.items()
-            }
 
         # The first pass over the frames: the radial distribution functions
         n_frames = 0
-        for x, box, volume in self._frames(configuration, periodic):
+        for x, box, volume in self._frames(configuration, periodic, wanted=wanted):
             for rdf in rdfs.values():
                 rdf.add_frame(x, box=box, volume=volume)
             n_frames += 1
         dt = self._dt
-        run_frames = self._run_frames
-
-        # The independent samples for the errors: the runs, or blocks of one run
-        if nruns > 1:
-            self._source = "runs"
-            blocks = run_frames
-        else:
-            self._source = "blocks"
-            blocks = max(1, int(P["number of blocks"]))
-        self._n_samples = len(split_blocks(range(n_frames), blocks))
+        if self._run_frames != run_frames:
+            raise RuntimeError(
+                f"Internal error: read {self._run_frames} frames, expected "
+                f"{run_frames}."
+            )
 
         text = f"Analyzed {n_frames} frames from {nruns} run{'s' if nruns > 1 else ''}"
         if dt is not None:
             text += f", every {dt:.3g} ps"
+        if (ion_pairs or solutes) and shell_wanted != wanted:
+            n = sum(n for _, _, n in self._strides(shell_wanted))
+            what = "solvation shells" + (" and ion pairing" if ion_pairs else "")
+            text += f"; for the {what}, {n} frames, every {shell_wanted:.3g} ps"
         text += ". " + self._error_note()
         printer.normal(__(text, indent=self.indent + 4 * " "))
         if not periodic:
@@ -437,27 +452,32 @@ class LiquidStructure(seamm.Node):
 
         results = {}
         rdf_results = {key: rdf.result(blocks) for key, rdf in rdfs.items()}
-        # The ion pairing and shells read the frames again, with the cutoffs
-        frames = lambda: self._frames(configuration, periodic)  # noqa: E731
         results["coordination numbers"] = self._coordination(
             pairs, rdf_results, cutoffs, periodic
         )
+
+        # The second pass, with the cutoffs from the radial distribution functions:
+        # the ion pairing and solvation shells together
+        pairing = None
+        shells = None
         if ion_pairs:
-            results["ion pairing"] = self._ion_pairing(
-                ion_pairs, rdf_results, cutoffs, species, frames, blocks
-            )
+            pairing = self._ion_pairing_setup(ion_pairs, rdf_results, cutoffs, species)
         if solutes:
-            results["solvation shells"] = self._shells(
-                P,
-                solutes,
-                rdf_results,
-                cutoffs,
-                species,
-                frames,
-                blocks,
-                dt,
-                run_frames,
-            )
+            shells = self._shells_setup(solutes, rdf_results, cutoffs, species)
+        if pairing is not None or shells is not None:
+            shell_blocks, shell_run_frames = frame_blocks(shell_wanted)
+            for x, box, _ in self._frames(configuration, periodic, wanted=shell_wanted):
+                if pairing is not None:
+                    self._ion_pairing_frame(pairing, x, box)
+                if shells is not None:
+                    self._shells_frame(shells, x, box)
+            shell_dt = self._dt
+            if pairing is not None:
+                results["ion pairing"] = self._ion_pairing_report(pairing, shell_blocks)
+            if shells is not None:
+                results["solvation shells"] = self._shells_report(
+                    P, shells, shell_blocks, shell_dt, shell_run_frames
+                )
 
         state = report_state(self, printer, self.paths)
 
@@ -603,11 +623,39 @@ class LiquidStructure(seamm.Node):
             str(__("\n" + title + "\n" + text + "\n", indent=8 * " ", wrap=False)),
         )
 
-    def _frames(self, configuration, periodic, first=False):
+    def _strides(self, wanted):
+        """The stride through the frames of each run for frames about ``wanted``
+        ps apart, the interval between the frames used (ps, or None for a single
+        frame), and the number of frames used from each run."""
+        result = []
+        for path in self.paths:
+            with open_md(path) as md:
+                # The interval between frames from the file's own time axis:
+                # MDAnalysis's H5MD reader does not find it
+                times = md.first["particles/all/position/time"]
+                n = times.shape[0]
+                stride = 1
+                dt = None
+                if n > 1:
+                    unit = times.attrs.get("unit", "ps")
+                    if isinstance(unit, bytes):
+                        unit = unit.decode()
+                    dt = Q_(float(times[1] - times[0]), unit).m_as("ps")
+                    if wanted is not None and dt > 0:
+                        # Every stride-th frame, no further apart than wanted
+                        stride = max(1, int(wanted / dt + 1.0e-6))
+                    dt *= stride
+                result.append((stride, dt, len(range(0, n, stride))))
+        return result
+
+    def _frames(self, configuration, periodic, first=False, wanted=None):
         """The frames of every run: positions (Å), box and volume (Å^3), the box
         and volume None without a cell. Sets ``self._dt``, the interval between
         frames in ps, and ``self._run_frames``, the number of frames of each run.
-        Frames closer together than ``self._wanted_dt`` (ps) are skipped."""
+        Frames closer together than ``wanted`` (ps; by default
+        ``self._wanted_dt``) are skipped."""
+        if wanted is None:
+            wanted = getattr(self, "_wanted_dt", None)
         dts = []
         run_frames = []
         for path in self.paths:
@@ -621,7 +669,6 @@ class LiquidStructure(seamm.Node):
                     if isinstance(unit, bytes):
                         unit = unit.decode()
                     dt = Q_(float(times[1] - times[0]), unit).m_as("ps")
-                    wanted = getattr(self, "_wanted_dt", None)
                     if wanted is not None and dt > 0:
                         # Every stride-th frame, no further apart than wanted
                         stride = max(1, int(wanted / dt + 1.0e-6))
@@ -642,11 +689,20 @@ class LiquidStructure(seamm.Node):
         self._dt = float(np.median(dts)) if dts else None
         self._run_frames = run_frames
 
-    def _ion_pairing(self, ion_pairs, rdf_results, cutoffs, species, frames, blocks):
-        """Classify the cations of each cation-anion pair in every frame."""
-        rows = []
+    def _ion_pairing_setup(self, ion_pairs, rdf_results, cutoffs, species):
+        """The cutoffs and accumulators for classifying the cations of each
+        cation-anion pair in every frame.
+
+        Returns
+        -------
+        dict
+            "jobs": the pairs to classify, each a dict with its label, cutoffs,
+            atoms and accumulator; "results" and "notes" for the pairs that cannot
+            be classified.
+        """
         results = {}
         notes = []
+        jobs = []
         for cation, anion in ion_pairs:
             label = f"{cation}-{anion}"
             res = rdf_results[(cation, anion)]
@@ -681,14 +737,42 @@ class LiquidStructure(seamm.Node):
             an_ids = np.unique(species.molecule_of_atom[an_atoms], return_inverse=True)[
                 1
             ]
-            acc = PairingAccumulator()
-            for x, box, _ in frames():
-                acc.add_frame(
-                    classify_ion_pairs(
-                        x[cat_atoms], x[an_atoms], r1, r2, box=box, anion_ids=an_ids
-                    )
+            jobs.append(
+                {
+                    "label": label,
+                    "r1": r1,
+                    "r2": r2,
+                    "cations": cat_atoms,
+                    "anions": an_atoms,
+                    "anion_ids": an_ids,
+                    "acc": PairingAccumulator(),
+                }
+            )
+        return {"jobs": jobs, "results": results, "notes": notes}
+
+    @staticmethod
+    def _ion_pairing_frame(setup, x, box):
+        """Classify the cations of one frame."""
+        for job in setup["jobs"]:
+            job["acc"].add_frame(
+                classify_ion_pairs(
+                    x[job["cations"]],
+                    x[job["anions"]],
+                    job["r1"],
+                    job["r2"],
+                    box=box,
+                    anion_ids=job["anion_ids"],
                 )
-            r = acc.result(blocks)
+            )
+
+    def _ion_pairing_report(self, setup, blocks):
+        """Print and return the fractions of the cations in each class."""
+        rows = []
+        results = setup["results"]
+        notes = setup["notes"]
+        for job in setup["jobs"]:
+            label, r1, r2 = job["label"], job["r1"], job["r2"]
+            r = job["acc"].result(blocks)
             entry = {"r1": r1, "r2": r2, "fractions": r["fractions"]}
             if r["errors"] is not None:
                 entry["fractions,stderr"] = r["errors"]
@@ -723,20 +807,18 @@ class LiquidStructure(seamm.Node):
             printer.normal("")
         return results
 
-    def _shells(
-        self,
-        P,
-        solutes,
-        rdf_results,
-        cutoffs,
-        species,
-        frames,
-        blocks,
-        dt,
-        run_frames,
-    ):
-        """The solvation shells of each solute."""
+    def _shells_setup(self, solutes, rdf_results, cutoffs, species):
+        """The cutoffs and accumulators for the solvation shells of each solute.
+
+        Returns
+        -------
+        dict
+            "jobs": for each solute with a shell, its name, solvents, the species
+            without a cutoff, and its accumulator; "results" for the others.
+        """
         results = {}
+        jobs = []
+        messages = []
         for solute in solutes:
             solute_atoms = species.heavy_atoms(solute)
             solute_ids = np.unique(
@@ -759,19 +841,38 @@ class LiquidStructure(seamm.Node):
                 solvents[name] = (atoms, species.molecule_of_atom[atoms], cutoff)
             if len(solvents) == 0:
                 results[solute] = {"error": "no cutoffs for any solvent"}
-                printer.normal(
-                    __(
-                        f"There is no cutoff for any species around {solute}, so it "
-                        "has no solvation shell. Give fixed cutoffs for it.\n",
-                        indent=8 * " ",
-                    )
+                messages.append(
+                    f"There is no cutoff for any species around {solute}, so it has "
+                    "no solvation shell. Give fixed cutoffs for it.\n"
                 )
                 continue
-            acc = ShellAccumulator(solute_atoms, solute_ids, solvents)
-            for x, box, _ in frames():
-                acc.add_frame(x, box=box)
+            jobs.append(
+                {
+                    "solute": solute,
+                    "solvents": solvents,
+                    "skipped": skipped,
+                    "acc": ShellAccumulator(solute_atoms, solute_ids, solvents),
+                }
+            )
+        return {"jobs": jobs, "results": results, "messages": messages}
+
+    @staticmethod
+    def _shells_frame(setup, x, box):
+        """Find the shells in one frame."""
+        for job in setup["jobs"]:
+            job["acc"].add_frame(x, box=box)
+
+    def _shells_report(self, P, setup, blocks, dt, run_frames):
+        """Print and return the solvation shells of each solute."""
+        results = setup["results"]
+        for message in setup["messages"]:
+            printer.normal(__(message, indent=8 * " "))
+        for job in setup["jobs"]:
+            solute = job["solute"]
+            solvents = job["solvents"]
+            skipped = job["skipped"]
             residence_dt = dt if P["residence times"] else None
-            r = acc.result(blocks, dt=residence_dt, runs=run_frames)
+            r = job["acc"].result(blocks, dt=residence_dt, runs=run_frames)
 
             entry = {
                 "cutoffs": {name: v[2] for name, v in solvents.items()},
