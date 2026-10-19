@@ -318,6 +318,10 @@ class LiquidStructure(seamm.Node):
         with open_md(self.paths[0]) as md:
             periodic = md.periodic
             charges = md.charges("all")
+            # The charges of ions may have been scaled, e.g. by 0.8; the ions are
+            # found from their formal charges
+            if charges is not None:
+                charges = np.asarray(charges, dtype=float) / md.ion_charge_scale
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 universe = md.universe(configuration)
