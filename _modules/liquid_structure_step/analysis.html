@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.analysis &#8212; SEAMM Liquid Structure Plug-in 2026.10.19.1 documentation</title>
+    <title>liquid_structure_step.analysis &#8212; SEAMM Liquid Structure Plug-in 2026.10.20 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=a5793183"></script>
+    <script src="../../_static/documentation_options.js?v=980f7468"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.19.1" />
+  <meta name="docsearch:version" content="2026.10.20" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -701,6 +701,73 @@
 
 
 
+<div class="viewcode-block" id="capped_pairs">
+<a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.analysis.capped_pairs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">capped_pairs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The pairs of points of ``a`` and ``b`` within ``cutoff``, with their</span>
+<span class="sd">    distances, under the minimum image convention in a periodic box.</span>
+
+<span class="sd">    As MDAnalysis' ``capped_distance``, but for a rectangular box (or none) it</span>
+<span class="sd">    uses scipy's periodic k-d tree, about ten times faster for the dense liquids</span>
+<span class="sd">    here: 4.4 million pairs within 12 Å for 9,436 atoms took 5 s a frame (SEAMM</span>
+<span class="sd">    job 5276, 2026-10-20). Other cells, and a cutoff over half the box, go to</span>
+<span class="sd">    MDAnalysis. The pairs come in another order.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a, b : numpy.ndarray(n, 3)</span>
+<span class="sd">        The points, Å.</span>
+<span class="sd">    cutoff : float</span>
+<span class="sd">        The largest distance, Å.</span>
+<span class="sd">    box : numpy.ndarray(6) or None</span>
+<span class="sd">        The MDAnalysis box (a, b, c, alpha, beta, gamma), or None without a cell.</span>
+<span class="sd">    return_distances : bool</span>
+<span class="sd">        Whether to return the distances too.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray(m, 2) of int[, numpy.ndarray(m)]</span>
+<span class="sd">        The indices into ``a`` and ``b`` of each pair, and their distances.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">cKDTree</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">boxsize</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">box</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">rectangular</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">:],</span> <span class="mf">90.0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">lengths</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rectangular</span> <span class="ow">or</span> <span class="n">cutoff</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">lengths</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">MDAnalysis.lib.distances</span><span class="w"> </span><span class="kn">import</span> <span class="n">capped_distance</span>
+
+            <span class="k">return</span> <span class="n">capped_distance</span><span class="p">(</span>
+                <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="n">return_distances</span>
+            <span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">_wrap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">lengths</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">_wrap</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">lengths</span><span class="p">)</span>
+        <span class="n">boxsize</span> <span class="o">=</span> <span class="n">lengths</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="k">if</span> <span class="n">return_distances</span> <span class="k">else</span> <span class="n">pairs</span>
+    <span class="n">tree_a</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">boxsize</span><span class="o">=</span><span class="n">boxsize</span><span class="p">)</span>
+    <span class="n">tree_b</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">boxsize</span><span class="o">=</span><span class="n">boxsize</span><span class="p">)</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">tree_a</span><span class="o">.</span><span class="n">sparse_distance_matrix</span><span class="p">(</span><span class="n">tree_b</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s2">"ndarray"</span><span class="p">)</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">found</span><span class="p">[</span><span class="s2">"i"</span><span class="p">],</span> <span class="n">found</span><span class="p">[</span><span class="s2">"j"</span><span class="p">]])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_distances</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">found</span><span class="p">[</span><span class="s2">"v"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pairs</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lengths</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Points wrapped into [0, L) in each direction, as the periodic tree needs."""</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lengths</span><span class="p">)</span>
+    <span class="c1"># np.mod can round a tiny negative number up to L itself</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">lengths</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+
 <span class="c1">#: Monatomic species taken as cations or anions when there are no charges</span>
 <span class="n">CATIONS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Li"</span><span class="p">,</span> <span class="s2">"Na"</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">,</span> <span class="s2">"Rb"</span><span class="p">,</span> <span class="s2">"Cs"</span><span class="p">,</span> <span class="s2">"Mg"</span><span class="p">,</span> <span class="s2">"Ca"</span><span class="p">,</span> <span class="s2">"Sr"</span><span class="p">,</span> <span class="s2">"Ba"</span><span class="p">,</span> <span class="s2">"Zn"</span><span class="p">}</span>
 <span class="n">ANIONS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"F"</span><span class="p">,</span> <span class="s2">"Cl"</span><span class="p">,</span> <span class="s2">"Br"</span><span class="p">,</span> <span class="s2">"I"</span><span class="p">}</span>
@@ -769,11 +836,9 @@
 <span class="sd">        volume : float or None</span>
 <span class="sd">            The volume of the cell, Å^3; needed for g(r), not for the counts.</span>
 <span class="sd">        """</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">MDAnalysis.lib.distances</span><span class="w"> </span><span class="kn">import</span> <span class="n">capped_distance</span>
-
         <span class="n">pa</span> <span class="o">=</span> <span class="n">positions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">]</span>
         <span class="n">pb</span> <span class="o">=</span> <span class="n">positions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">]</span>
-        <span class="n">pairs</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">capped_distance</span><span class="p">(</span>
+        <span class="n">pairs</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">capped_pairs</span><span class="p">(</span>
             <span class="n">pa</span><span class="p">,</span> <span class="n">pb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_max</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">keep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_a</span><span class="p">[</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_b</span><span class="p">[</span><span class="n">pairs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
@@ -1074,8 +1139,6 @@
 <span class="sd">        cation) or "AGG" (an anion within r1 that is also within r1 of another</span>
 <span class="sd">        cation, or more than one within r1).</span>
 <span class="sd">    """</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">MDAnalysis.lib.distances</span><span class="w"> </span><span class="kn">import</span> <span class="n">capped_distance</span>
-
     <span class="n">n_c</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cations</span><span class="p">)</span>
     <span class="n">classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_c</span><span class="p">,</span> <span class="s2">"free"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n_c</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">anions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1084,7 +1147,7 @@
         <span class="n">anion_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">anions</span><span class="p">))</span>
     <span class="n">anion_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">anion_ids</span><span class="p">)</span>
     <span class="n">n_a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">anion_ids</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">pairs</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">capped_distance</span><span class="p">(</span><span class="n">cations</span><span class="p">,</span> <span class="n">anions</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+    <span class="n">pairs</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">capped_pairs</span><span class="p">(</span><span class="n">cations</span><span class="p">,</span> <span class="n">anions</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
     <span class="c1"># One entry per cation and anion (not per atom of the anion)</span>
     <span class="n">contact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">pairs</span><span class="p">[</span><span class="n">d</span> <span class="o">&lt;</span> <span class="n">r1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">anion_ids</span><span class="p">[</span><span class="n">pairs</span><span class="p">[</span><span class="n">d</span> <span class="o">&lt;</span> <span class="n">r1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
@@ -1178,13 +1241,11 @@
 <div class="viewcode-block" id="ShellAccumulator.add_frame">
 <a class="viewcode-back" href="../../api/liquid_structure_step.html#liquid_structure_step.analysis.ShellAccumulator.add_frame">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">MDAnalysis.lib.distances</span><span class="w"> </span><span class="kn">import</span> <span class="n">capped_distance</span>
-
         <span class="n">p_solute</span> <span class="o">=</span> <span class="n">positions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">solute_atoms</span><span class="p">]</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_solutes</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
             <span class="n">atoms</span><span class="p">,</span> <span class="n">molecules</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solvents</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="n">pairs</span> <span class="o">=</span> <span class="n">capped_distance</span><span class="p">(</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="n">capped_pairs</span><span class="p">(</span>
                 <span class="n">p_solute</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">atoms</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">return_distances</span><span class="o">=</span><span class="kc">False</span>
             <span class="p">)</span>
             <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>

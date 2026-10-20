@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>liquid_structure_step package &#8212; SEAMM Liquid Structure Plug-in 2026.10.19.1 documentation</title>
+    <title>liquid_structure_step package &#8212; SEAMM Liquid Structure Plug-in 2026.10.20 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=a5793183"></script>
+    <script src="../_static/documentation_options.js?v=980f7468"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.19.1" />
+  <meta name="docsearch:version" content="2026.10.20" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -776,6 +776,35 @@ one species, else the element or the species.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="liquid_structure_step.analysis.capped_pairs">
+<span class="sig-prename descclassname"><span class="pre">liquid_structure_step.analysis.</span></span><span class="sig-name descname"><span class="pre">capped_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/liquid_structure_step/analysis.html#capped_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#liquid_structure_step.analysis.capped_pairs" title="Link to this definition">#</a></dt>
+<dd><p>The pairs of points of <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> within <code class="docutils literal notranslate"><span class="pre">cutoff</span></code>, with their
+distances, under the minimum image convention in a periodic box.</p>
+<p>As MDAnalysis’ <code class="docutils literal notranslate"><span class="pre">capped_distance</span></code>, but for a rectangular box (or none) it
+uses scipy’s periodic k-d tree, about ten times faster for the dense liquids
+here: 4.4 million pairs within 12 Å for 9,436 atoms took 5 s a frame (SEAMM
+job 5276, 2026-10-20). Other cells, and a cutoff over half the box, go to
+MDAnalysis. The pairs come in another order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em><em>(</em><em>n</em><em>, </em><em>3</em><em>)</em>) – The points, Å.</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em><em>(</em><em>n</em><em>, </em><em>3</em><em>)</em>) – The points, Å.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – The largest distance, Å.</p></li>
+<li><p><strong>box</strong> (<em>numpy.ndarray</em><em>(</em><em>6</em><em>) or </em><em>None</em>) – The MDAnalysis box (a, b, c, alpha, beta, gamma), or None without a cell.</p></li>
+<li><p><strong>return_distances</strong> (<em>bool</em>) – Whether to return the distances too.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The indices into <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> of each pair, and their distances.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray(m, 2) of int[, numpy.ndarray(m)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="liquid_structure_step.analysis.classify_ion_pairs">
 <span class="sig-prename descclassname"><span class="pre">liquid_structure_step.analysis.</span></span><span class="sig-name descname"><span class="pre">classify_ion_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anion_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/liquid_structure_step/analysis.html#classify_ion_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#liquid_structure_step.analysis.classify_ion_pairs" title="Link to this definition">#</a></dt>
 <dd><p>Classify each cation of one frame.</p>
@@ -1482,6 +1511,7 @@ A SEAMM plug-in for Liquid Structure</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.Species.site_label"><code class="docutils literal notranslate"><span class="pre">Species.site_label()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.capped_pairs"><code class="docutils literal notranslate"><span class="pre">capped_pairs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.classify_ion_pairs"><code class="docutils literal notranslate"><span class="pre">classify_ion_pairs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.coordination_by_block"><code class="docutils literal notranslate"><span class="pre">coordination_by_block()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.coordination_number"><code class="docutils literal notranslate"><span class="pre">coordination_number()</span></code></a></li>
