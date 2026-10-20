@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.20 documentation</title>
+    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.20.1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=980f7468"></script>
+    <script src="../../_static/documentation_options.js?v=dbae61be"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.20" />
+  <meta name="docsearch:version" content="2026.10.20.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -821,8 +821,11 @@
 <span class="sd">            The configuration that was simulated: its atoms are in the order of the</span>
 <span class="sd">            atoms in the MD files.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">configuration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"There is no structure to analyze."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">configuration</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">configuration</span><span class="o">.</span><span class="n">n_atoms</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">"There is no structure to analyze: the current configuration has no "</span>
+                <span class="s2">"atoms. Read or build the structure that was simulated first."</span>
+            <span class="p">)</span>
         <span class="n">species</span> <span class="o">=</span> <span class="n">Species</span><span class="p">(</span>
             <span class="n">configuration</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">symbols</span><span class="p">,</span> <span class="n">configuration</span><span class="o">.</span><span class="n">find_molecules</span><span class="p">(</span><span class="n">as_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
