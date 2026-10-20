@@ -306,8 +306,11 @@ class LiquidStructure(seamm.Node):
             The configuration that was simulated: its atoms are in the order of the
             atoms in the MD files.
         """
-        if configuration is None:
-            raise RuntimeError("There is no structure to analyze.")
+        if configuration is None or configuration.n_atoms == 0:
+            raise RuntimeError(
+                "There is no structure to analyze: the current configuration has no "
+                "atoms. Read or build the structure that was simulated first."
+            )
         species = Species(
             configuration.atoms.symbols, configuration.find_molecules(as_indices=True)
         )

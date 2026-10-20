@@ -1,6 +1,10 @@
 =======
 History
 =======
+2026.10.20.1 -- Bugfix: an empty structure is refused at once
+    * Without a structure (no atoms in the current configuration), the step now stops
+      at once with a clear message, before reading the MD files.
+
 2026.10.20 -- About ten times faster for large liquids
     * Finding the pairs of atoms within the range of the radial distribution
       functions, and for the ion pairing and solvation shells, now uses a periodic
