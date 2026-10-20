@@ -1,5 +1,6 @@
 MDAnalysis>=2.8
 numpy
+scipy
 seamm>=2026.10.17.1
 seamm-md-analysis[structure]>=2026.10.19
 seamm-util
