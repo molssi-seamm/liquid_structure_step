@@ -1,6 +1,16 @@
 =======
 History
 =======
+2026.10.20 -- About ten times faster for large liquids
+    * Finding the pairs of atoms within the range of the radial distribution
+      functions, and for the ion pairing and solvation shells, now uses a periodic
+      k-d tree for rectangular cells, about ten times faster than before. For a
+      9,436-atom electrolyte with every pair of elements to 12 Å, a frame took
+      about 5 s, so 20,000 frames took more than a day; now about 2 hours.
+      Triclinic cells are handled as before. Distances are now computed in double
+      precision, so a pair exactly at the edge of a bin can rarely fall in the
+      next one.
+
 2026.10.19.1 -- Scaled ion charges
     * The cations and anions of MD with scaled charges (LAMMPS's 'Scale the charges of
       ions by') are found from their formal charges, for any factor.

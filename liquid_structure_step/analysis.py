@@ -181,6 +181,70 @@ class Species:
         return cations, anions
 
 
+def capped_pairs(a, b, cutoff, box=None, return_distances=True):
+    """The pairs of points of ``a`` and ``b`` within ``cutoff``, with their
+    distances, under the minimum image convention in a periodic box.
+
+    As MDAnalysis' ``capped_distance``, but for a rectangular box (or none) it
+    uses scipy's periodic k-d tree, about ten times faster for the dense liquids
+    here: 4.4 million pairs within 12 Å for 9,436 atoms took 5 s a frame (SEAMM
+    job 5276, 2026-10-20). Other cells, and a cutoff over half the box, go to
+    MDAnalysis. The pairs come in another order.
+
+    Parameters
+    ----------
+    a, b : numpy.ndarray(n, 3)
+        The points, Å.
+    cutoff : float
+        The largest distance, Å.
+    box : numpy.ndarray(6) or None
+        The MDAnalysis box (a, b, c, alpha, beta, gamma), or None without a cell.
+    return_distances : bool
+        Whether to return the distances too.
+
+    Returns
+    -------
+    numpy.ndarray(m, 2) of int[, numpy.ndarray(m)]
+        The indices into ``a`` and ``b`` of each pair, and their distances.
+    """
+    from scipy.spatial import cKDTree
+
+    a = np.asarray(a, dtype=float).reshape(-1, 3)
+    b = np.asarray(b, dtype=float).reshape(-1, 3)
+    boxsize = None
+    if box is not None:
+        box = np.asarray(box, dtype=float)
+        lengths = box[:3]
+        rectangular = np.allclose(box[3:], 90.0) and np.all(lengths > 0.0)
+        if not rectangular or cutoff >= 0.5 * lengths.min():
+            from MDAnalysis.lib.distances import capped_distance
+
+            return capped_distance(
+                a, b, cutoff, box=box, return_distances=return_distances
+            )
+        a = _wrap(a, lengths)
+        b = _wrap(b, lengths)
+        boxsize = lengths
+    if len(a) == 0 or len(b) == 0:
+        pairs = np.empty((0, 2), dtype=np.intp)
+        return (pairs, np.empty(0)) if return_distances else pairs
+    tree_a = cKDTree(a, boxsize=boxsize)
+    tree_b = cKDTree(b, boxsize=boxsize)
+    found = tree_a.sparse_distance_matrix(tree_b, cutoff, output_type="ndarray")
+    pairs = np.column_stack([found["i"], found["j"]]).astype(np.intp)
+    if return_distances:
+        return pairs, np.asarray(found["v"], dtype=float)
+    return pairs
+
+
+def _wrap(x, lengths):
+    """Points wrapped into [0, L) in each direction, as the periodic tree needs."""
+    x = np.mod(x, lengths)
+    # np.mod can round a tiny negative number up to L itself
+    x[x >= lengths] = 0.0
+    return x
+
+
 #: Monatomic species taken as cations or anions when there are no charges
 CATIONS = {"Li", "Na", "K", "Rb", "Cs", "Mg", "Ca", "Sr", "Ba", "Zn"}
 ANIONS = {"F", "Cl", "Br", "I"}
@@ -245,11 +309,9 @@ class RDF:
         volume : float or None
             The volume of the cell, Å^3; needed for g(r), not for the counts.
         """
-        from MDAnalysis.lib.distances import capped_distance
-
         pa = positions[self.a]
         pb = positions[self.b]
-        pairs, distances = capped_distance(
+        pairs, distances = capped_pairs(
             pa, pb, self.r_max, box=box, return_distances=True
         )
         keep = self.mol_a[pairs[:, 0]] != self.mol_b[pairs[:, 1]]
@@ -528,8 +590,6 @@ def classify_ion_pairs(cations, anions, r1, r2, box=None, anion_ids=None):
         cation) or "AGG" (an anion within r1 that is also within r1 of another
         cation, or more than one within r1).
     """
-    from MDAnalysis.lib.distances import capped_distance
-
     n_c = len(cations)
     classes = np.full(n_c, "free", dtype=object)
     if n_c == 0 or len(anions) == 0:
@@ -538,7 +598,7 @@ def classify_ion_pairs(cations, anions, r1, r2, box=None, anion_ids=None):
         anion_ids = np.arange(len(anions))
     anion_ids = np.asarray(anion_ids)
     n_a = int(anion_ids.max()) + 1
-    pairs, d = capped_distance(cations, anions, max(r1, r2), box=box)
+    pairs, d = capped_pairs(cations, anions, max(r1, r2), box=box)
     # One entry per cation and anion (not per atom of the anion)
     contact = np.unique(
         np.column_stack([pairs[d < r1, 0], anion_ids[pairs[d < r1, 1]]]), axis=0
@@ -618,13 +678,11 @@ class ShellAccumulator:
         }
 
     def add_frame(self, positions, box=None):
-        from MDAnalysis.lib.distances import capped_distance
-
         p_solute = positions[self.solute_atoms]
         counts = np.zeros((self.n_solutes, len(self.names)), dtype=int)
         for k, name in enumerate(self.names):
             atoms, molecules, cutoff = self.solvents[name]
-            pairs = capped_distance(
+            pairs = capped_pairs(
                 p_solute, positions[atoms], cutoff, box=box, return_distances=False
             )
             pairs = np.unique(
