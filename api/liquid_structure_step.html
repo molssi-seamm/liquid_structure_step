@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>liquid_structure_step package &#8212; SEAMM Liquid Structure Plug-in 2026.10.20.1 documentation</title>
+    <title>liquid_structure_step package &#8212; SEAMM Liquid Structure Plug-in 2026.10.21 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=dbae61be"></script>
+    <script src="../_static/documentation_options.js?v=3c77f071"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.20.1" />
+  <meta name="docsearch:version" content="2026.10.21" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -846,6 +846,13 @@ coordination number: the neighbours in the bins wholly within the cutoff.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="liquid_structure_step.analysis.far_beyond">
+<span class="sig-prename descclassname"><span class="pre">liquid_structure_step.analysis.</span></span><span class="sig-name descname"><span class="pre">far_beyond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/liquid_structure_step/analysis.html#far_beyond"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#liquid_structure_step.analysis.far_beyond" title="Link to this definition">#</a></dt>
+<dd><p>Whether a first minimum is so far beyond its peak that it may be a later
+one.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="liquid_structure_step.analysis.find_cutoff">
 <span class="sig-prename descclassname"><span class="pre">liquid_structure_step.analysis.</span></span><span class="sig-name descname"><span class="pre">find_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/liquid_structure_step/analysis.html#find_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#liquid_structure_step.analysis.find_cutoff" title="Link to this definition">#</a></dt>
 <dd><p>The fixed cutoffs for a pair, in either order, or None.</p>
@@ -880,7 +887,9 @@ contact and solvent-separated cutoff for ion pairing.</p>
 lasts <code class="docutils literal notranslate"><span class="pre">sustain</span></code> Å, so that the noise of a sparse pair (a few ions) is not
 taken for structure. The first peak is the highest point (of the unsmoothed
 g(r)) of the first stretch above 1; the first minimum the lowest point of the
-smoothed g(r) between it and the next stretch above 1.</p>
+smoothed g(r) between it and the next stretch above 1 – unless that is
+<a class="reference internal" href="#liquid_structure_step.analysis.far_beyond" title="liquid_structure_step.analysis.far_beyond"><code class="xref py py-func docutils literal notranslate"><span class="pre">far_beyond()</span></code></a> the peak, when it is the first clear dip after the peak if
+there is one (see <code class="xref py py-func docutils literal notranslate"><span class="pre">_first_dip()</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">peak</span></code> and <code class="docutils literal notranslate"><span class="pre">peak_height</span></code>, <code class="docutils literal notranslate"><span class="pre">minimum</span></code> and <code class="docutils literal notranslate"><span class="pre">minimum_height</span></code>; None
@@ -1515,6 +1524,7 @@ A SEAMM plug-in for Liquid Structure</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.classify_ion_pairs"><code class="docutils literal notranslate"><span class="pre">classify_ion_pairs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.coordination_by_block"><code class="docutils literal notranslate"><span class="pre">coordination_by_block()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.coordination_number"><code class="docutils literal notranslate"><span class="pre">coordination_number()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.far_beyond"><code class="docutils literal notranslate"><span class="pre">far_beyond()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.find_cutoff"><code class="docutils literal notranslate"><span class="pre">find_cutoff()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.hill_formula"><code class="docutils literal notranslate"><span class="pre">hill_formula()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquid_structure_step.analysis.parse_cutoffs"><code class="docutils literal notranslate"><span class="pre">parse_cutoffs()</span></code></a></li>

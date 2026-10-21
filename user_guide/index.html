@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User Guide &#8212; SEAMM Liquid Structure Plug-in 2026.10.20.1 documentation</title>
+    <title>User Guide &#8212; SEAMM Liquid Structure Plug-in 2026.10.21 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=dbae61be"></script>
+    <script src="../_static/documentation_options.js?v=3c77f071"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.20.1" />
+  <meta name="docsearch:version" content="2026.10.21" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -584,10 +584,15 @@ shortest width of the cell) in bins of “Bin width”, leaving out pairs of ato
 same molecule. The table gives the first peak and its height, the first minimum, and
 the coordination number: the number of B sites within the cutoff of an A site,
 averaged over the A sites and frames.</p>
+<p>The first minimum is the lowest point of the (lightly smoothed) g(r) between the first
+peak and where g(r) next rises above 1. A g(r) of several overlapping shells – an ion
+and all the heavy atoms of a solvent molecule, say – can stay above 1 well past its
+first shell, so when that point lies far beyond the peak (more than 1.6 times its
+distance plus 0.5 Å), the first clear dip after the peak is taken instead.</p>
 <p>The cutoff is the first minimum unless a <strong>fixed cutoff</strong> is given:
-<code class="docutils literal notranslate"><span class="pre">Na-O(H2O):</span> <span class="pre">3.2,</span> <span class="pre">Na-Cl:</span> <span class="pre">3.5</span></code>. When the first minimum lies far beyond the peak – as
-when a solvent-shared ion pair adds a peak at about 5 Å – the step suggests a fixed
-cutoff.</p>
+<code class="docutils literal notranslate"><span class="pre">Na-O(H2O):</span> <span class="pre">3.2,</span> <span class="pre">Na-Cl:</span> <span class="pre">3.5</span></code>. When the first minimum still lies far beyond the peak
+– as when a solvent-shared ion pair adds a peak at about 5 Å – the step suggests a
+fixed cutoff, here and for the solvation shells.</p>
 </section>
 <section id="ion-pairing">
 <h2>Ion pairing<a class="headerlink" href="#ion-pairing" title="Link to this heading">#</a></h2>

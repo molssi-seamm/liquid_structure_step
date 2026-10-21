@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.20.1 documentation</title>
+    <title>liquid_structure_step.liquid_structure &#8212; SEAMM Liquid Structure Plug-in 2026.10.21 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=dbae61be"></script>
+    <script src="../../_static/documentation_options.js?v=3c77f071"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2026.10.20.1" />
+  <meta name="docsearch:version" content="2026.10.21" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -537,6 +537,7 @@
     <span class="n">classify_ion_pairs</span><span class="p">,</span>
     <span class="n">coordination_by_block</span><span class="p">,</span>
     <span class="n">coordination_number</span><span class="p">,</span>
+    <span class="n">far_beyond</span><span class="p">,</span>
     <span class="n">find_cutoff</span><span class="p">,</span>
     <span class="n">parse_cutoffs</span><span class="p">,</span>
     <span class="n">parse_pairs</span><span class="p">,</span>
@@ -1074,7 +1075,7 @@
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="ow">not</span> <span class="n">fixed</span>
                     <span class="ow">and</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="ow">and</span> <span class="n">cutoff</span> <span class="o">&gt;</span> <span class="mf">1.6</span> <span class="o">*</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span>
+                    <span class="ow">and</span> <span class="n">far_beyond</span><span class="p">(</span><span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">)</span>
                 <span class="p">):</span>
                     <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">"The first minimum of </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">cutoff</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å, is far beyond "</span>
@@ -1356,7 +1357,16 @@
                 <span class="n">cutoff</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">fixed</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">rdf_results</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">solute</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">peak_and_minimum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])[</span><span class="s2">"minimum"</span><span class="p">]</span>
+                    <span class="n">pm</span> <span class="o">=</span> <span class="n">peak_and_minimum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"r"</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span>
+                    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="s2">"minimum"</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">far_beyond</span><span class="p">(</span><span class="n">pm</span><span class="p">[</span><span class="s2">"peak"</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">):</span>
+                        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"The cutoff of </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> around </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">cutoff</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å, "</span>
+                            <span class="sa">f</span><span class="s2">"is far beyond the first peak at </span><span class="si">{</span><span class="n">pm</span><span class="p">[</span><span class="s1">'peak'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å, so "</span>
+                            <span class="s2">"the shell may hold more than the first neighbours. "</span>
+                            <span class="sa">f</span><span class="s2">"Consider a fixed cutoff, e.g. '</span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: "</span>
+                            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pm</span><span class="p">[</span><span class="s1">'peak'</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.8</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">'.</span><span class="se">\n</span><span class="s2">"</span>
+                        <span class="p">)</span>
                 <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">skipped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                     <span class="k">continue</span>
