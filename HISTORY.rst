@@ -1,6 +1,11 @@
 =======
 History
 =======
+2026.10.21.1 -- Bugfix: values without an error are rounded in the tables
+    * A value that was the same in every run, such as the fraction of a few ions that
+      are paired, was printed to six significant figures (0.349206); it is now given
+      to four, like a value without an error estimate.
+
 2026.10.21 -- Bugfix: the first minimum of overlapping shells
     * When g(r) stayed above 1 past its first shell -- as for an ion and all the heavy
       atoms of a solvent molecule -- the first minimum was taken from a later shell, so

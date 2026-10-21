@@ -81,14 +81,17 @@ PM = "± (95%)"
 def cells(estimate):
     """A value and its 95% interval as text for a table; empty without a value.
 
-    A value without an error estimate is given to four significant figures; one
-    whose error is negligible (the same in every sample) as Estimate gives it.
+    A value without an error estimate, or whose error is negligible (the same in
+    every sample, e.g. a fraction of a few ions), is given to four significant
+    figures: Estimate gives such a value six, which suits quantities fixed by
+    construction, not these (2026-10-21: a pairing fraction read 0.349206).
     """
     if estimate is None or estimate.value is None or not np.isfinite(estimate.value):
         return "", ""
-    if estimate.ci95 is None:
+    value, error = estimate.formatted()
+    if error == "":
         return f"{estimate.value:.4g}", ""
-    return estimate.formatted()
+    return value, error
 
 
 def yes(value):
