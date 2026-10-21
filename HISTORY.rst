@@ -1,6 +1,16 @@
 =======
 History
 =======
+2026.10.21 -- Bugfix: the first minimum of overlapping shells
+    * When g(r) stayed above 1 past its first shell -- as for an ion and all the heavy
+      atoms of a solvent molecule -- the first minimum was taken from a later shell, so
+      a solvation-shell cutoff could be far too large (Li+ in EC:DMC: 9.57 Å for EC,
+      giving 19 EC in the shell, rather than about 2.8 Å). When the minimum found lies
+      far beyond the peak, the first clear dip after the peak is now used. This also
+      affects the coordination numbers and the ion-pairing cutoffs of such pairs.
+    * A solvation-shell cutoff that is still far beyond its peak is now noted, with a
+      suggested fixed cutoff, as it already was for the coordination numbers.
+
 2026.10.20.1 -- Bugfix: an empty structure is refused at once
     * Without a structure (no atoms in the current configuration), the step now stops
       at once with a clear message, before reading the MD files.

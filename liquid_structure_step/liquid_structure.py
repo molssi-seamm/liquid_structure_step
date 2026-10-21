@@ -44,6 +44,7 @@ from liquid_structure_step.analysis import (
     classify_ion_pairs,
     coordination_by_block,
     coordination_number,
+    far_beyond,
     find_cutoff,
     parse_cutoffs,
     parse_pairs,
@@ -558,7 +559,7 @@ class LiquidStructure(seamm.Node):
                 if (
                     not fixed
                     and pm["peak"] is not None
-                    and cutoff > 1.6 * pm["peak"] + 0.5
+                    and far_beyond(pm["peak"], cutoff)
                 ):
                     notes.append(
                         f"The first minimum of {label}, {cutoff:.2f} Å, is far beyond "
@@ -840,7 +841,16 @@ class LiquidStructure(seamm.Node):
                 cutoff = fixed[0] if fixed else None
                 res = rdf_results.get((solute, name))
                 if cutoff is None and res is not None and res["g"] is not None:
-                    cutoff = peak_and_minimum(res["r"], res["g"])["minimum"]
+                    pm = peak_and_minimum(res["r"], res["g"])
+                    cutoff = pm["minimum"]
+                    if cutoff is not None and far_beyond(pm["peak"], cutoff):
+                        messages.append(
+                            f"The cutoff of {name} around {solute}, {cutoff:.2f} Å, "
+                            f"is far beyond the first peak at {pm['peak']:.2f} Å, so "
+                            "the shell may hold more than the first neighbours. "
+                            f"Consider a fixed cutoff, e.g. '{solute}-{name}: "
+                            f"{pm['peak'] + 0.8:.1f}'.\n"
+                        )
                 if cutoff is None:
                     skipped.append(name)
                     continue

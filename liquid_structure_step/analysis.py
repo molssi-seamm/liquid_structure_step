@@ -473,6 +473,35 @@ def _first_run(mask, n):
     return int(hits[0]) if hits.size > 0 else None
 
 
+def far_beyond(peak, minimum):
+    """Whether a first minimum is so far beyond its peak that it may be a later
+    one."""
+    return minimum > 1.6 * peak + 0.5
+
+
+def _first_dip(gs, i_peak, i_last, n=1, rise=0.1):
+    """The first clear dip of the smoothed ``gs`` after the peak at ``i_peak`` and
+    before ``i_last``: the lowest point before the curve climbs back by ``rise`` of
+    the depth from the top of the peak and stays there for ``n`` bins, or None if
+    it does not before ``i_last``.
+
+    A g(r) of several overlapping shells -- an ion and all the heavy atoms of a
+    solvent molecule -- can stay above 1 well past its first shell, and the lowest
+    point before the next stretch above 1 is then a later minimum (2026-10-21: the
+    Li-EC shell cutoff came out 9.57 Å, not ~2.8).
+    """
+    while i_peak + 1 < len(gs) and gs[i_peak + 1] >= gs[i_peak]:
+        i_peak += 1  # the top of the smoothed peak
+    top = gs[i_peak]
+    i_min = i_peak
+    for i in range(i_peak + 1, min(i_last, len(gs) - 1) + 1):
+        if gs[i] < gs[i_min]:
+            i_min = i
+        elif np.all(gs[i : i + n] - gs[i_min] >= rise * (top - gs[i_min])):
+            return i_min
+    return None
+
+
 def peak_and_minimum(r, g, width=0.2, sustain=0.2):
     """The first peak and first minimum of a g(r).
 
@@ -480,7 +509,9 @@ def peak_and_minimum(r, g, width=0.2, sustain=0.2):
     lasts ``sustain`` Å, so that the noise of a sparse pair (a few ions) is not
     taken for structure. The first peak is the highest point (of the unsmoothed
     g(r)) of the first stretch above 1; the first minimum the lowest point of the
-    smoothed g(r) between it and the next stretch above 1.
+    smoothed g(r) between it and the next stretch above 1 -- unless that is
+    :func:`far_beyond` the peak, when it is the first clear dip after the peak if
+    there is one (see :func:`_first_dip`).
 
     Returns
     -------
@@ -515,6 +546,10 @@ def peak_and_minimum(r, g, width=0.2, sustain=0.2):
     rise = _first_run(gs[end:] > 1.0, n)
     stop = end + rise if rise is not None else len(gs)
     i_min = i_peak + int(np.argmin(gs[i_peak:stop]))
+    if far_beyond(r[i_peak], r[i_min]):
+        dip = _first_dip(gs, i_peak, i_min, n)
+        if dip is not None:
+            i_min = dip
     if i_min >= len(gs) - max(1, smooth // 2):
         return result  # still falling at the end of the range
     result["minimum"] = float(r[i_min])

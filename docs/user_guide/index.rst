@@ -84,10 +84,16 @@ same molecule. The table gives the first peak and its height, the first minimum,
 the coordination number: the number of B sites within the cutoff of an A site,
 averaged over the A sites and frames.
 
+The first minimum is the lowest point of the (lightly smoothed) g(r) between the first
+peak and where g(r) next rises above 1. A g(r) of several overlapping shells -- an ion
+and all the heavy atoms of a solvent molecule, say -- can stay above 1 well past its
+first shell, so when that point lies far beyond the peak (more than 1.6 times its
+distance plus 0.5 Å), the first clear dip after the peak is taken instead.
+
 The cutoff is the first minimum unless a **fixed cutoff** is given:
-``Na-O(H2O): 3.2, Na-Cl: 3.5``. When the first minimum lies far beyond the peak -- as
-when a solvent-shared ion pair adds a peak at about 5 Å -- the step suggests a fixed
-cutoff.
+``Na-O(H2O): 3.2, Na-Cl: 3.5``. When the first minimum still lies far beyond the peak
+-- as when a solvent-shared ion pair adds a peak at about 5 Å -- the step suggests a
+fixed cutoff, here and for the solvation shells.
 
 Ion pairing
 ===========
