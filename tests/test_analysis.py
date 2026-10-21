@@ -401,3 +401,17 @@ def test_parse_cutoffs():
     for bad in ("Na-Cl 3.5", "Na-Cl: x", "Na-Cl: 1 2 3", "Na-Cl: -1"):
         with pytest.raises(AnalysisError):
             parse_cutoffs(bad)
+
+
+def test_table_cells():
+    """Values in the tables: four significant figures without a meaningful error,
+    the value and its 95% interval otherwise (2026-10-21: a pairing fraction the
+    same in every run read 0.349206)."""
+    from seamm_md_analysis import Estimate
+    from liquid_structure_step.liquid_structure import cells
+
+    assert cells(None) == ("", "")
+    assert cells(Estimate(22 / 63, None, 1)) == ("0.3492", "")
+    assert cells(Estimate(22 / 63, 0.0, 4)) == ("0.3492", "")
+    value, error = cells(Estimate(0.35, 0.05, 4))
+    assert error != "" and value.startswith("0.3")
