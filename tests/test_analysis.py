@@ -17,6 +17,7 @@ from liquid_structure_step.analysis import (
     classify_ion_pairs,
     coordination_by_block,
     coordination_number,
+    far_beyond,
     hill_formula,
     parse_cutoffs,
     parse_pairs,
@@ -160,6 +161,22 @@ def test_peak_and_minimum():
     assert second_minimum(r, g, pm["minimum"]) == pytest.approx(6.4, abs=0.15)
     # A g(r) that never rises above 1 has no peak
     assert peak_and_minimum(r, np.full_like(r, 0.5))["peak"] is None
+
+
+def test_minimum_of_overlapping_shells():
+    """An ion and all the heavy atoms of a solvent: the shells overlap, so the
+    g(r) stays above 1 past the first one. The first minimum is the dip after the
+    first peak, not the lowest point before g(r) next rises above 1 (2026-10-21:
+    the Li-EC shell cutoff came out 9.57 Å, not ~2.8)."""
+    r = np.arange(0.01, 12.0, 0.02)
+    g = np.where(r < 1.7, 0.0, 1.2)
+    for centre, height, width in ((2.0, 8.0, 0.12), (3.2, 4.0, 0.2), (4.3, 2.0, 0.4)):
+        g += height * np.exp(-(((r - centre) / width) ** 2)) * (r > 1.7)
+    g -= 0.4 * np.exp(-(((r - 9.5) / 0.5) ** 2))
+    pm = peak_and_minimum(r, g)
+    assert pm["peak"] == pytest.approx(2.0, abs=0.05)
+    assert pm["minimum"] == pytest.approx(2.6, abs=0.15)
+    assert not far_beyond(pm["peak"], pm["minimum"])
 
 
 def test_minimum_of_a_noisy_sparse_pair():
